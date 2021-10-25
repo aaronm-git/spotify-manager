@@ -1,0 +1,10 @@
+body {
+  background-color: black;
+  color: lightslategray;
+}
+
+.icon {
+  margin-left: 0.5rem;
+  position: relative;
+  bottom: 2px;
+}
