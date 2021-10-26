@@ -1,10 +1,12 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Card } from "react-bootstrap";
 const Dashboard = () => {
   return (
     <Container>
-      <Row>
-        <Col md={{ span: 8, offset: 2 }}>Dashboard</Col>
-      </Row>
+      <Card className="bg-dark text-light mt-2 shadow-lg">
+        <Card.Body>
+          <Card.Title className="fw-light border-bottom border-light">Dashboard</Card.Title>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

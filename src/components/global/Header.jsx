@@ -1,13 +1,20 @@
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { BsSpotify } from "react-icons/bs";
-const Header = () => {
+import { Container, Nav, Navbar, Button } from "react-bootstrap";
+import { BsSpotify, BsFillGearFill } from "react-icons/bs";
+import { Link } from "react-router-dom";
+const Header = ({ userProfile }) => {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
-      <Container>
-        <Navbar.Brand className="mx-auto">
+      <Container className="position-relative">
+        <Link to="/" className="mx-auto navbar-brand">
           <span className="fw-bold">SPOTIFY MANAGER</span>
           <BsSpotify className="icon" />
-        </Navbar.Brand>
+        </Link>
+        <div className="position-absolute" style={{ right: "0" }}>
+          <span className="me-3">{userProfile ? `Logged in as: ${userProfile.display_name}` : ""}</span>
+          <Link to="/settings" className="text-white">
+            <BsFillGearFill style={{ position: "relative", bottom: "2px" }} />
+          </Link>
+        </div>
         {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
         {/* <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
