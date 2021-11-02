@@ -3,20 +3,15 @@ import { BsSpotify, BsFillGearFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 const Header = ({ userProfile }) => {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Container className="position-relative">
-        <Link to="/" className="mx-auto navbar-brand">
-          <span className="fw-bold">SPOTIFY MANAGER</span>
-          <BsSpotify className="icon" />
-        </Link>
-        <div className="position-absolute" style={{ right: "0" }}>
-          <span className="me-3">{userProfile ? `Logged in as: ${userProfile.display_name}` : ""}</span>
-          <Link to="/settings" className="text-white">
-            <BsFillGearFill style={{ position: "relative", bottom: "2px" }} />
+    <>
+      <Navbar bg="black" variant="dark">
+        <Container className="position-relative">
+          <Link to="/" className="mx-auto navbar-brand">
+            <span className="fw-bold">SPOTIFY MANAGER</span>
+            <BsSpotify className="icon" />
           </Link>
-        </div>
-        {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
-        {/* <Navbar.Collapse id="basic-navbar-nav">
+          {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
+          {/* <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link">Link</Nav.Link>
@@ -33,8 +28,24 @@ const Header = ({ userProfile }) => {
             </NavDropdown>
           </Nav>
         </Navbar.Collapse> */}
-      </Container>
-    </Navbar>
+        </Container>
+      </Navbar>
+      {userProfile ? (
+        <Navbar bg="primary">
+          <Container className="justify-content-end">
+            <span>Logged in as:&nbsp;</span>
+            <span>
+              {userProfile.display_name}
+              <Link to="/settings" className="text-white">
+                <BsFillGearFill className="icon" />
+              </Link>
+            </span>
+          </Container>
+        </Navbar>
+      ) : (
+        ""
+      )}
+    </>
   );
 };
 
