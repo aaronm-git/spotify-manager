@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Header from "./components/global/Header";
-import Authenticate from "./components/Authenticate";
+import AuthorizeApp from "./components/AuthorizeApp";
 import Dashboard from "./components/Dashboard";
 import Settings from "./components/Settings";
 import axios from "axios";
@@ -40,12 +40,8 @@ const authScopes = [
   "user-follow-read",
 ];
 
-const renderCallback = (props) => {
-  getAccessToken(Object.fromEntries(new URLSearchParams(props.location.search)));
-  return <Redirect to="/" />;
-};
-
-const authorizeApp = () => {
+const getAppAuthorization = () => {
+  console.log("authorize function fire");
   const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
   let url = getAuthorizationUrl;
   url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
@@ -63,7 +59,7 @@ const getAccessToken = (params) => {
     body += "&code=" + params.code;
     body += "&redirect_uri=" + encodeURI("http://localhost:3000/callback/");
     console.log(body);
-    axios
+    return axios
       .post(`https://accounts.spotify.com/api/token`, body, {
         headers: {
           Authorization: "Basic " + base64Authorization,
@@ -76,9 +72,11 @@ const getAccessToken = (params) => {
         localStorage.setItem("refresh_token", response.data.refresh_token);
         localStorage.setItem("expires_in", response.data.expires_in);
         localStorage.setItem("received_on", new Date());
+        return true;
       })
       .catch((error) => {
         console.error(error);
+        return false;
       });
   } else {
     console.error("Invalid params");
@@ -103,6 +101,7 @@ const getRefreshAccessToken = () => {
         console.log(response);
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("expires_in", response.data.expires_in);
+        localStorage.setItem("given_on", new Date());
       })
       .catch((error) => {
         console.error(error);
@@ -129,27 +128,45 @@ const getCurrentUserProfile = () => {
 };
 
 const App = () => {
-  const loggedIn = true;
+  const [isAppAuthorized, setIsAppAuthorized] = useState(localStorage.getItem("access_token") ? true : false);
   const [userProfile, setUserProfile] = useState({});
+
+  const renderCallback = (props) => {
+    (async () => {
+      const test = await getAccessToken(Object.fromEntries(new URLSearchParams(props.location.search)));
+      if (test) setIsAppAuthorized(test);
+    })();
+    console.log(localStorage.getItem("access_token"));
+    return <Redirect to="/" />;
+  };
 
   useEffect(() => {
     (async () => {
-      setUserProfile(await getCurrentUserProfile());
+      if (isAppAuthorized) {
+        const profile = await getCurrentUserProfile();
+        setUserProfile(profile);
+      } else {
+        setUserProfile({});
+      }
     })();
-  }, []);
+  }, [isAppAuthorized]);
 
   return (
     <Router>
-      <Header userProfile={userProfile} />
+      <Header userProfile={userProfile} isAppAuthorized={isAppAuthorized} />
       <Switch>
         <Route path="/" exact>
-          {loggedIn ? <Redirect to="/dashboard" /> : <Redirect to="/authenticate" />}
+          {isAppAuthorized ? <Redirect to="/dashboard" /> : <Redirect to="/authorize" />}
         </Route>
-        <Route path="/authenticate">{!loggedIn ? <Authenticate /> : <Redirect to="/" />}</Route>
-        <Route path="/dashboard">{loggedIn ? <Dashboard /> : <Redirect to="/authenticate" />}</Route>
-        <Route path="/settings">
-          {loggedIn ? <Settings authorizeApp={authorizeApp} /> : <Redirect to="/authenticate" />}
+        <Route path="/authorize">
+          {!isAppAuthorized ? (
+            <AuthorizeApp getAppAuthorization={getAppAuthorization} setIsAppAuthorized={setIsAppAuthorized} />
+          ) : (
+            <Redirect to="/" />
+          )}
         </Route>
+        <Route path="/dashboard">{isAppAuthorized ? <Dashboard /> : <Redirect to="/authorize" />}</Route>
+        <Route path="/settings">{isAppAuthorized ? <Settings /> : <Redirect to="/authorize" />}</Route>
         <Route path="/callback" render={renderCallback} />
       </Switch>
     </Router>
