@@ -7,7 +7,7 @@ const Header = ({ userProfile, isAppAuthorized }) => {
       <Navbar bg="black" variant="dark">
         <Container className="position-relative">
           <Link to="/" className="mx-auto navbar-brand">
-            <span className="fw-bold">SPOTIFY MANAGER</span>
+            <span className="fw-bold">SPOTIFY SHORTCUTS</span>
             <BsSpotify className="icon" />
           </Link>
         </Container>
