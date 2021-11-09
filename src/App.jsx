@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Header from "./components/global/Header";
 import AuthorizeApp from "./components/AuthorizeApp";
@@ -40,116 +40,99 @@ const authScopes = [
   "user-follow-read",
 ];
 
-const getAppAuthorization = () => {
-  console.log("authorize function fire");
-  const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
-  let url = getAuthorizationUrl;
-  url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-  url += "&response_type=code";
-  url += "&redirect_uri=http://localhost:3000/callback/";
-  url += "&scope=" + authScopes.join(" ");
-  window.location.href = url;
-};
-
-const getAccessToken = (params) => {
-  if (params.error) {
-    console.error(params.error);
-  } else if (params.code) {
-    let body = "grant_type=authorization_code";
-    body += "&code=" + params.code;
-    body += "&redirect_uri=" + encodeURI("http://localhost:3000/callback/");
-    console.log(body);
-    return axios
-      .post(`https://accounts.spotify.com/api/token`, body, {
-        headers: {
-          Authorization: "Basic " + base64Authorization,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        localStorage.setItem("access_token", response.data.access_token);
-        localStorage.setItem("refresh_token", response.data.refresh_token);
-        localStorage.setItem("expires_in", response.data.expires_in);
-        localStorage.setItem("received_on", new Date());
-        return true;
-      })
-      .catch((error) => {
-        console.error(error);
-        return false;
-      });
-  } else {
-    console.error("Invalid params");
-  }
-};
-
-const getRefreshAccessToken = () => {
-  const receivedOn = new Date(localStorage.getItem("received_on"));
-  const expiresIn = parseInt(localStorage.getItem("expires_in")) * 1000;
-  if (new Date() > new Date(receivedOn.getTime() + expiresIn)) {
-    const refreshToken = localStorage.getItem("refresh_token");
-    let body = "grant_type=refresh_token";
-    body += "&refresh_token=" + refreshToken;
-    axios
-      .post("https://accounts.spotify.com/api/token", body, {
-        headers: {
-          Authorization: "Basic " + base64Authorization,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-      .then((response) => {
+const getRefreshAccessToken = async () => {
+  if (localStorage.getItem("refresh_token")) {
+    const receivedOn = new Date(localStorage.getItem("received_on"));
+    const expiresIn = parseInt(localStorage.getItem("expires_in")) * 1000;
+    if (new Date() > new Date(receivedOn.getTime() + expiresIn)) {
+      try {
+        const refreshToken = localStorage.getItem("refresh_token");
+        let body = "grant_type=refresh_token";
+        body += "&refresh_token=" + refreshToken;
+        const response = await axios.post("https://accounts.spotify.com/api/token", body, {
+          headers: {
+            Authorization: "Basic " + base64Authorization,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        });
         console.log(response);
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("expires_in", response.data.expires_in);
         localStorage.setItem("given_on", new Date());
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
   }
-};
-
-const getCurrentUserProfile = () => {
-  getRefreshAccessToken();
-  return axios
-    .get("https://api.spotify.com/v1/me", {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
 };
 
 const App = () => {
   const [isAppAuthorized, setIsAppAuthorized] = useState(localStorage.getItem("access_token") ? true : false);
-  const [userProfile, setUserProfile] = useState({});
-
-  const renderCallback = (props) => {
-    (async () => {
-      const test = await getAccessToken(Object.fromEntries(new URLSearchParams(props.location.search)));
-      if (test) setIsAppAuthorized(test);
-    })();
-    console.log(localStorage.getItem("access_token"));
-    return <Redirect to="/" />;
+  const [userProfile, setUserProfile] = useState(JSON.parse(localStorage.getItem("user_profile")));
+  getRefreshAccessToken();
+  const getAppAuthorization = () => {
+    console.log("authorize function fire");
+    const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
+    let url = getAuthorizationUrl;
+    url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+    url += "&response_type=code";
+    url += "&redirect_uri=http://localhost:3000/callback/";
+    url += "&scope=" + authScopes.join(" ");
+    window.location.href = url;
   };
 
-  useEffect(() => {
-    (async () => {
-      if (isAppAuthorized) {
-        const profile = await getCurrentUserProfile();
-        setUserProfile(profile);
-      } else {
-        setUserProfile({});
-      }
-    })();
-  }, [isAppAuthorized]);
+  const renderCallback = (props) => {
+    getAccessToken(Object.fromEntries(new URLSearchParams(props.location.search)));
+    return <Redirect to="/authorize" />;
+  };
+
+  const getAccessToken = (params) => {
+    if (params.error) {
+      console.error(params.error);
+    } else if (params.code) {
+      let body = "grant_type=authorization_code";
+      body += "&code=" + params.code;
+      body += "&redirect_uri=" + encodeURI("http://localhost:3000/callback/");
+      console.log(body);
+      return axios
+        .post(`https://accounts.spotify.com/api/token`, body, {
+          headers: {
+            Authorization: "Basic " + base64Authorization,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          localStorage.setItem("access_token", response.data.access_token);
+          localStorage.setItem("refresh_token", response.data.refresh_token);
+          localStorage.setItem("expires_in", response.data.expires_in);
+          localStorage.setItem("received_on", new Date());
+          setIsAppAuthorized(true);
+          getCurrentUserProfile();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      console.error("Invalid params");
+    }
+  };
+
+  const getCurrentUserProfile = async () => {
+    try {
+      const response = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      setUserProfile(response.data);
+      localStorage.setItem("user_profile", JSON.stringify(response.data));
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <Router>
@@ -160,7 +143,7 @@ const App = () => {
         </Route>
         <Route path="/authorize">
           {!isAppAuthorized ? (
-            <AuthorizeApp getAppAuthorization={getAppAuthorization} setIsAppAuthorized={setIsAppAuthorized} />
+            <AuthorizeApp getAppAuthorization={getAppAuthorization} isAuthorized={isAppAuthorized} />
           ) : (
             <Redirect to="/" />
           )}

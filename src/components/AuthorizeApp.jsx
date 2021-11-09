@@ -1,8 +1,11 @@
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { BsSpotify } from "react-icons/bs";
+import { Redirect } from "react-router";
 
-const Authenticate = ({ getAppAuthorization }) => {
-  return (
+const AuthorizeApp = ({ getAppAuthorization, isAppAuthorized }) => {
+  return isAppAuthorized ? (
+    <Redirect to="/" />
+  ) : (
     <Container className="mt-5">
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
@@ -25,4 +28,4 @@ const Authenticate = ({ getAppAuthorization }) => {
   );
 };
 
-export default Authenticate;
+export default AuthorizeApp;
