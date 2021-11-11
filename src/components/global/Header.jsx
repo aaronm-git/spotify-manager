@@ -13,7 +13,7 @@ const Header = ({ userProfile, isAppAuthorized }) => {
         </Container>
       </Navbar>
       {isAppAuthorized ? (
-        <Navbar bg="primary">
+        <Navbar className="bg-spotifydarker">
           <Container className="justify-content-end">
             <span>Logged in as:&nbsp;</span>
             <span>

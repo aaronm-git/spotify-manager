@@ -58,7 +58,7 @@ const getRefreshAccessToken = async () => {
         console.log(response);
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("expires_in", response.data.expires_in);
-        localStorage.setItem("given_on", new Date());
+        localStorage.setItem("received_on", new Date());
       } catch (error) {
         console.error(error.message);
       }
@@ -69,7 +69,7 @@ const getRefreshAccessToken = async () => {
 const App = () => {
   const [isAppAuthorized, setIsAppAuthorized] = useState(localStorage.getItem("access_token") ? true : false);
   const [userProfile, setUserProfile] = useState(JSON.parse(localStorage.getItem("user_profile")));
-  getRefreshAccessToken();
+
   const getAppAuthorization = () => {
     console.log("authorize function fire");
     const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
@@ -148,7 +148,9 @@ const App = () => {
             <Redirect to="/" />
           )}
         </Route>
-        <Route path="/dashboard">{isAppAuthorized ? <Dashboard /> : <Redirect to="/authorize" />}</Route>
+        <Route path="/dashboard">
+          {isAppAuthorized ? <Dashboard getRefreshAccessToken={getRefreshAccessToken} /> : <Redirect to="/authorize" />}
+        </Route>
         <Route path="/settings">{isAppAuthorized ? <Settings /> : <Redirect to="/authorize" />}</Route>
         <Route path="/callback" render={renderCallback} />
       </Switch>
