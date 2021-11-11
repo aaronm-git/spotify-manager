@@ -1,0 +1,31 @@
+
+@import "~bootstrap/scss/functions"
+
+$body-bg: #121212
+$body-color: #ffff
+
+$spotify-green: #1ed760
+$spotify-green-dark: #1db954
+$spotify-dark: #212121
+$spotify-darker: #121212
+$spotify-light: #535353
+$spotify-lighter: #b3b3b3
+$primary: $spotify-green
+$light: $spotify-light
+$dark: $spotify-dark
+
+$custom-colors: ("primary-dark": $spotify-green-dark, "darker": $spotify-darker, "lighter": $spotify-lighter)
+
+@import "~bootstrap/scss/variables"
+@import "~bootstrap/scss/mixins"
+
+$theme-colors: map-merge($theme-colors, $custom-colors)
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value")
+$utilities-colors: map-merge($utilities-colors, $theme-colors-rgb)
+$utilities-colors: map-merge($utilities-colors, ("white": rgb(255,255,255)))
+$utilities-text-colors: map-loop($utilities-colors, rgba-css-var, "$key", "text")
+$utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg")
+
+// Pagination
+@import "./pagination"
+@import "~bootstrap/scss/bootstrap.scss"
