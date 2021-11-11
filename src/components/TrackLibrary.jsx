@@ -33,7 +33,7 @@ const TrackLibrary = ({ columns, data }) => {
 
   return (
     <>
-      <Table bordered hover striped responsive variant="dark" {...getTableProps()}>
+      <Table bordered hover striped responsive variant="primary" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()} className="unselectable">
@@ -70,7 +70,6 @@ const TrackLibrary = ({ columns, data }) => {
       <Pagination
         size="sm"
         css={css`
-          justify-content: center;
           li {
             min-width: 3rem;
             text-align: center;

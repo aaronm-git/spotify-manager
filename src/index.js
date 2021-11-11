@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./theme.sass";
+import "./sass/theme.sass";
 import "./css/global.css";
 
 ReactDOM.render(
