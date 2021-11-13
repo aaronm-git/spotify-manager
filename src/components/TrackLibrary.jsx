@@ -1,8 +1,33 @@
 /** @jsxImportSource @emotion/react */
-import { Table, Pagination } from "react-bootstrap";
-import { useTable, useSortBy, usePagination } from "react-table";
+import { useState } from "react";
+import { Row, Col, Table, Pagination, Form } from "react-bootstrap";
+import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce } from "react-table";
 import { css } from "@emotion/react";
 // import { css } from "@emotion/css";
+
+const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+  const [value, setValue] = useState(globalFilter);
+  const onChange = useAsyncDebounce((value) => {
+    setGlobalFilter(value || undefined);
+  }, 500);
+
+  return (
+    <Row>
+      <Col lg="3">
+        <Form.Control
+          value={value || ""}
+          type="text"
+          placeholder="Search..."
+          className="my-2"
+          onChange={(e) => {
+            setValue(e.target.value);
+            onChange(e.target.value);
+          }}
+        />
+      </Col>
+    </Row>
+  );
+};
 
 const TrackLibrary = ({ columns, data }) => {
   // Use the state and functions returned from useTable to build your UI
@@ -11,6 +36,8 @@ const TrackLibrary = ({ columns, data }) => {
     headerGroups,
     page,
     prepareRow,
+    state,
+    setGlobalFilter,
 
     // The rest of these things are super handy, too ;)
     canPreviousPage,
@@ -27,12 +54,15 @@ const TrackLibrary = ({ columns, data }) => {
       columns,
       data,
     },
+    useGlobalFilter,
     useSortBy,
     usePagination
   );
 
   return (
     <>
+      <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
+
       <Table bordered hover striped responsive variant="primary" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -69,6 +99,7 @@ const TrackLibrary = ({ columns, data }) => {
 
       <Pagination
         size="sm"
+        className="unselectable"
         css={css`
           li {
             min-width: 3rem;
