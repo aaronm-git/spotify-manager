@@ -80,13 +80,22 @@ const TrackLibrary = ({ columns, data }) => {
           {page.map((row, i) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()} className="position-relative text-nowrap">
+              <tr {...row.getRowProps()} className="text-nowrap">
                 {row.cells.map((cell) => {
+                  const columnHeader = cell.column.Header;
+                  const trackUri = row.original.track.uri;
+                  const artistUri = row.original.track.artists[0].uri;
+                  const albumUri = row.original.track.album.uri;
+                  let uri = "";
+                  if (columnHeader === "Name") uri = trackUri;
+                  else if (columnHeader === "Artist") uri = artistUri;
+                  else if (columnHeader === "Album") uri = albumUri;
+
                   return (
-                    <td {...cell.getCellProps()}>
+                    <td {...cell.getCellProps()} className="position-relative">
                       {cell.render("Cell")}
-                      <a href={row.original.track.uri} target="_blank" rel="noreferrer" className="stretched-link">
-                        <span className="visually-hidden">{row.original.track.external_urls.spotify}</span>
+                      <a href={uri} target="_blank" rel="noreferrer" className="stretched-link" title="Open in Spotify">
+                        <span className="visually-hidden">{uri}</span>
                       </a>
                     </td>
                   );
