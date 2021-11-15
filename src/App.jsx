@@ -143,10 +143,8 @@ const App = () => {
     try {
       await getRefreshAccessToken();
       let hasNext = true;
-      let loop = 0;
       let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-      while (hasNext && loop <= 0) {
-        loop++;
+      while (hasNext) {
         const response = await axios.get(url, {
           headers: {
             authorization: `Bearer ${localStorage.getItem("access_token")}`,
