@@ -83,22 +83,32 @@ const TrackLibrary = ({ columns, data }) => {
               <tr {...row.getRowProps()} className="text-nowrap">
                 {row.cells.map((cell) => {
                   const columnHeader = cell.column.Header;
-                  const trackUri = row.original.track.uri;
-                  const artistUri = row.original.track.artists[0].uri;
-                  const albumUri = row.original.track.album.uri;
-                  let uri = "";
-                  if (columnHeader === "Name") uri = trackUri;
-                  else if (columnHeader === "Artist") uri = artistUri;
-                  else if (columnHeader === "Album") uri = albumUri;
+                  if (columnHeader === "#") {
+                    return <td {...cell.getCellProps()}>{++i + pageIndex * pageSize}</td>;
+                  } else {
+                    const trackUri = row.original.track.uri;
+                    const artistUri = row.original.track.artists[0].uri;
+                    const albumUri = row.original.track.album.uri;
+                    let uri = "";
+                    if (columnHeader === "Name") uri = trackUri;
+                    else if (columnHeader === "Artist") uri = artistUri;
+                    else if (columnHeader === "Album") uri = albumUri;
 
-                  return (
-                    <td {...cell.getCellProps()} className="position-relative">
-                      {cell.render("Cell")}
-                      <a href={uri} target="_blank" rel="noreferrer" className="stretched-link" title="Open in Spotify">
-                        <span className="visually-hidden">{uri}</span>
-                      </a>
-                    </td>
-                  );
+                    return (
+                      <td {...cell.getCellProps()} className="position-relative">
+                        {cell.render("Cell")}
+                        <a
+                          href={uri}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="stretched-link"
+                          title="Open in Spotify"
+                        >
+                          <span className="visually-hidden">{uri}</span>
+                        </a>
+                      </td>
+                    );
+                  }
                 })}
               </tr>
             );

@@ -10,6 +10,12 @@ const Dashboard = ({ savedTracksData, isLoading }) => {
   const columns = useMemo(
     () => [
       {
+        Header: "#",
+        // accessor: (originalRow, rowIndex) => {
+        //   return rowIndex + 1;
+        // },
+      },
+      {
         Header: "Name",
         accessor: "track.name",
       },
