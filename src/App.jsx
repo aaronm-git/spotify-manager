@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Header from "./components/global/Header";
 import AuthorizeApp from "./components/AuthorizeApp";
@@ -69,6 +69,8 @@ const getRefreshAccessToken = async () => {
 const App = () => {
   const [isAppAuthorized, setIsAppAuthorized] = useState(localStorage.getItem("access_token") ? true : false);
   const [userProfile, setUserProfile] = useState(JSON.parse(localStorage.getItem("user_profile")));
+  const [savedTracksData, setSavedTracksData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAppAuthorization = () => {
     console.log("authorize function fire");
@@ -134,6 +136,37 @@ const App = () => {
     }
   };
 
+  const getUserSavedTracks = useCallback(async () => {
+    console.log("running api call");
+    setIsLoading(true);
+    let savedTracks = [];
+    try {
+      await getRefreshAccessToken();
+      let hasNext = true;
+      let loop = 0;
+      let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
+      while (hasNext && loop <= 0) {
+        loop++;
+        const response = await axios.get(url, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        savedTracks = [...savedTracks, ...response.data.items];
+        if (response.data.next) url = response.data.next;
+        else hasNext = false;
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+    setIsLoading(false);
+    setSavedTracksData(savedTracks);
+  }, [setSavedTracksData]);
+
+  useEffect(() => {
+    if (isAppAuthorized) getUserSavedTracks();
+  }, [isAppAuthorized, getUserSavedTracks]);
+
   return (
     <Router>
       <Header userProfile={userProfile} isAppAuthorized={isAppAuthorized} />
@@ -149,7 +182,11 @@ const App = () => {
           )}
         </Route>
         <Route path="/dashboard">
-          {isAppAuthorized ? <Dashboard getRefreshAccessToken={getRefreshAccessToken} /> : <Redirect to="/authorize" />}
+          {isAppAuthorized ? (
+            <Dashboard savedTracksData={savedTracksData} isLoading={isLoading} />
+          ) : (
+            <Redirect to="/authorize" />
+          )}
         </Route>
         <Route path="/settings">{isAppAuthorized ? <Settings /> : <Redirect to="/authorize" />}</Route>
         <Route path="/callback" render={renderCallback} />
