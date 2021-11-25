@@ -1,0 +1,248 @@
+[
+  {
+    "added_at": "2021-11-07T06:35:38Z",
+    "track": {
+      "album": {
+        "album_type": "album",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/1uNFoZAHBGtllmzznpCI3s"
+            },
+            "href": "https://api.spotify.com/v1/artists/1uNFoZAHBGtllmzznpCI3s",
+            "id": "1uNFoZAHBGtllmzznpCI3s",
+            "name": "Justin Bieber",
+            "type": "artist",
+            "uri": "spotify:artist:1uNFoZAHBGtllmzznpCI3s"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/6Fr2rQkZ383FcMqFyT7yPr"
+        },
+        "href": "https://api.spotify.com/v1/albums/6Fr2rQkZ383FcMqFyT7yPr",
+        "id": "6Fr2rQkZ383FcMqFyT7yPr",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b273f46b9d202509a8f7384b90de",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e02f46b9d202509a8f7384b90de",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d00004851f46b9d202509a8f7384b90de",
+            "width": 64
+          }
+        ],
+        "name": "Purpose (Deluxe)",
+        "release_date": "2015-11-13",
+        "release_date_precision": "day",
+        "total_tracks": 19,
+        "type": "album",
+        "uri": "spotify:album:6Fr2rQkZ383FcMqFyT7yPr"
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1uNFoZAHBGtllmzznpCI3s"
+          },
+          "href": "https://api.spotify.com/v1/artists/1uNFoZAHBGtllmzznpCI3s",
+          "id": "1uNFoZAHBGtllmzznpCI3s",
+          "name": "Justin Bieber",
+          "type": "artist",
+          "uri": "spotify:artist:1uNFoZAHBGtllmzznpCI3s"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 200786,
+      "explicit": false,
+      "external_ids": {
+        "isrc": "USUM71516760"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/09CtPGIpYB4BrO8qb1RGsF"
+      },
+      "href": "https://api.spotify.com/v1/tracks/09CtPGIpYB4BrO8qb1RGsF",
+      "id": "09CtPGIpYB4BrO8qb1RGsF",
+      "is_local": false,
+      "is_playable": true,
+      "linked_from": {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2GpHJb7xGNBaIDTrBxjIu6"
+        },
+        "href": "https://api.spotify.com/v1/tracks/2GpHJb7xGNBaIDTrBxjIu6",
+        "id": "2GpHJb7xGNBaIDTrBxjIu6",
+        "type": "track",
+        "uri": "spotify:track:2GpHJb7xGNBaIDTrBxjIu6"
+      },
+      "name": "Sorry",
+      "popularity": 81,
+      "preview_url": "https://p.scdn.co/mp3-preview/24bf9af0a0a53448ea3e48f6267cbcae61df20f6?cid=774b29d4f13844c495f206cafdad9c86",
+      "track_number": 4,
+      "type": "track",
+      "uri": "spotify:track:09CtPGIpYB4BrO8qb1RGsF"
+    }
+  },
+  {
+    "added_at": "2021-11-04T14:07:43Z",
+    "track": {
+      "album": {
+        "album_type": "single",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/6x33CmZWo2Ve4hxYl2Craq"
+            },
+            "href": "https://api.spotify.com/v1/artists/6x33CmZWo2Ve4hxYl2Craq",
+            "id": "6x33CmZWo2Ve4hxYl2Craq",
+            "name": "Foghat",
+            "type": "artist",
+            "uri": "spotify:artist:6x33CmZWo2Ve4hxYl2Craq"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/26m6IjR3ZAUsYqSekFKqCq"
+        },
+        "href": "https://api.spotify.com/v1/albums/26m6IjR3ZAUsYqSekFKqCq",
+        "id": "26m6IjR3ZAUsYqSekFKqCq",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b27389410b7bcf80b767b8a1c5c8",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e0289410b7bcf80b767b8a1c5c8",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d0000485189410b7bcf80b767b8a1c5c8",
+            "width": 64
+          }
+        ],
+        "name": "Slow Ride / Save Your Loving (For Me)",
+        "release_date": "1975",
+        "release_date_precision": "year",
+        "total_tracks": 2,
+        "type": "album",
+        "uri": "spotify:album:26m6IjR3ZAUsYqSekFKqCq"
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/6x33CmZWo2Ve4hxYl2Craq"
+          },
+          "href": "https://api.spotify.com/v1/artists/6x33CmZWo2Ve4hxYl2Craq",
+          "id": "6x33CmZWo2Ve4hxYl2Craq",
+          "name": "Foghat",
+          "type": "artist",
+          "uri": "spotify:artist:6x33CmZWo2Ve4hxYl2Craq"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 232533,
+      "explicit": false,
+      "external_ids": {
+        "isrc": "USRH10802802"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4MYb7NWLwXNDB7bYs3HeX8"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4MYb7NWLwXNDB7bYs3HeX8",
+      "id": "4MYb7NWLwXNDB7bYs3HeX8",
+      "is_local": false,
+      "is_playable": true,
+      "name": "Slow Ride",
+      "popularity": 67,
+      "preview_url": "https://p.scdn.co/mp3-preview/ee66dd621031b61f2936b661ef9c468879d4105d?cid=774b29d4f13844c495f206cafdad9c86",
+      "track_number": 1,
+      "type": "track",
+      "uri": "spotify:track:4MYb7NWLwXNDB7bYs3HeX8"
+    }
+  },
+  {
+    "added_at": "2021-11-03T19:35:34Z",
+    "track": {
+      "album": {
+        "album_type": "compilation",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/3yt4IVDHz0luREG9Uf9xrp"
+            },
+            "href": "https://api.spotify.com/v1/artists/3yt4IVDHz0luREG9Uf9xrp",
+            "id": "3yt4IVDHz0luREG9Uf9xrp",
+            "name": "The Champs",
+            "type": "artist",
+            "uri": "spotify:artist:3yt4IVDHz0luREG9Uf9xrp"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/7dcrUMOet5HIHYiDaVk89R"
+        },
+        "href": "https://api.spotify.com/v1/albums/7dcrUMOet5HIHYiDaVk89R",
+        "id": "7dcrUMOet5HIHYiDaVk89R",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b27339cbd37b54526c3328840edf",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e0239cbd37b54526c3328840edf",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d0000485139cbd37b54526c3328840edf",
+            "width": 64
+          }
+        ],
+        "name": "Greatest Hits / Tequila",
+        "release_date": "1994-04-19",
+        "release_date_precision": "day",
+        "total_tracks": 10,
+        "type": "album",
+        "uri": "spotify:album:7dcrUMOet5HIHYiDaVk89R"
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/3yt4IVDHz0luREG9Uf9xrp"
+          },
+          "href": "https://api.spotify.com/v1/artists/3yt4IVDHz0luREG9Uf9xrp",
+          "id": "3yt4IVDHz0luREG9Uf9xrp",
+          "name": "The Champs",
+          "type": "artist",
+          "uri": "spotify:artist:3yt4IVDHz0luREG9Uf9xrp"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 135240,
+      "explicit": false,
+      "external_ids": {
+        "isrc": "USATV0500278"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/5gJKsGij5oGt5H5RSFYXPa"
+      },
+      "href": "https://api.spotify.com/v1/tracks/5gJKsGij5oGt5H5RSFYXPa",
+      "id": "5gJKsGij5oGt5H5RSFYXPa",
+      "is_local": false,
+      "is_playable": true,
+      "name": "Tequila",
+      "popularity": 59,
+      "preview_url": "https://p.scdn.co/mp3-preview/2c88f827c751d5e53c9ce222cf04ce5d40c879b1?cid=774b29d4f13844c495f206cafdad9c86",
+      "track_number": 1,
+      "type": "track",
+      "uri": "spotify:track:5gJKsGij5oGt5H5RSFYXPa"
+    }
+  }
+]

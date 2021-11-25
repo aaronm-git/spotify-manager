@@ -1,9 +1,6 @@
-/** @jsxImportSource @emotion/react */
 import { useState } from "react";
 import { Row, Col, Table, Pagination, Form } from "react-bootstrap";
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce } from "react-table";
-import { css } from "@emotion/react";
-// import { css } from "@emotion/css";
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -116,16 +113,7 @@ const TrackLibrary = ({ columns, data }) => {
         </tbody>
       </Table>
 
-      <Pagination
-        size="sm"
-        className="unselectable"
-        css={css`
-          li {
-            min-width: 3rem;
-            text-align: center;
-          }
-        `}
-      >
+      <Pagination size="sm" className="unselectable">
         <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
         {/* <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} /> */}
 

@@ -5,6 +5,9 @@ import AuthorizeApp from "./components/AuthorizeApp";
 import Dashboard from "./components/Dashboard";
 import Settings from "./components/Settings";
 import axios from "axios";
+import _ from "lodash";
+// import TrackData from "../3-tracks.json";
+import TrackData from "./all-my-tracks.json";
 
 const base64Authorization = `${window.btoa(
   `${process.env.REACT_APP_SPOTIFY_CLIENT_ID}:${process.env.REACT_APP_SPOTIFY_SECRET}`
@@ -55,7 +58,6 @@ const getRefreshAccessToken = async () => {
             "Content-Type": "application/x-www-form-urlencoded",
           },
         });
-        console.log(response);
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("expires_in", response.data.expires_in);
         localStorage.setItem("received_on", new Date());
@@ -73,7 +75,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getAppAuthorization = () => {
-    console.log("authorize function fire");
     const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
     let url = getAuthorizationUrl;
     url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
@@ -95,7 +96,6 @@ const App = () => {
       let body = "grant_type=authorization_code";
       body += "&code=" + params.code;
       body += "&redirect_uri=" + encodeURI("http://localhost:3000/callback/");
-      console.log(body);
       return axios
         .post(`https://accounts.spotify.com/api/token`, body, {
           headers: {
@@ -104,7 +104,6 @@ const App = () => {
           },
         })
         .then((response) => {
-          console.log(response);
           localStorage.setItem("access_token", response.data.access_token);
           localStorage.setItem("refresh_token", response.data.refresh_token);
           localStorage.setItem("expires_in", response.data.expires_in);
@@ -128,7 +127,6 @@ const App = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       setUserProfile(response.data);
       localStorage.setItem("user_profile", JSON.stringify(response.data));
     } catch (error) {
@@ -137,23 +135,24 @@ const App = () => {
   };
 
   const getUserSavedTracks = useCallback(async () => {
-    console.log("running api call");
     setIsLoading(true);
-    let savedTracks = [];
+    let savedTracks = TrackData;
     try {
       await getRefreshAccessToken();
       let hasNext = true;
+      let loop = 0;
       let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-      while (hasNext) {
-        const response = await axios.get(url, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-        savedTracks = [...savedTracks, ...response.data.items];
-        if (response.data.next) url = response.data.next;
-        else hasNext = false;
-      }
+      // while (hasNext && loop <= 3) {
+      //   loop++;
+      //   const response = await axios.get(url, {
+      //     headers: {
+      //       authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     },
+      //   });
+      //   savedTracks = [...savedTracks, ...response.data.items];
+      //   if (response.data.next) url = response.data.next;
+      //   else hasNext = false;
+      // }
     } catch (error) {
       console.error(error.message);
     }
@@ -181,7 +180,11 @@ const App = () => {
         </Route>
         <Route path="/dashboard">
           {isAppAuthorized ? (
-            <Dashboard savedTracksData={savedTracksData} isLoading={isLoading} />
+            <Dashboard
+              savedTracksData={savedTracksData}
+              setSavedTracksData={setSavedTracksData}
+              isLoading={isLoading}
+            />
           ) : (
             <Redirect to="/authorize" />
           )}
