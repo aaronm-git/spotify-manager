@@ -35,6 +35,7 @@ const TrackLibrary = ({ columns, data }) => {
     prepareRow,
     state,
     setGlobalFilter,
+    rows,
 
     // The rest of these things are super handy, too ;)
     canPreviousPage,
@@ -110,6 +111,10 @@ const TrackLibrary = ({ columns, data }) => {
           })}
         </tbody>
       </Table>
+
+      <p>
+        Showing page {pageIndex + 1} of {pageCount} | Total rows: {rows.length}
+      </p>
 
       <Pagination size="sm" className="unselectable">
         <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
