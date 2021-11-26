@@ -18,15 +18,15 @@ const Dashboard = ({ savedTracksData, setSavedTracksData, isLoading }) => {
       },
       {
         Header: "Name",
-        accessor: "track.name",
+        accessor: "trackName",
       },
       {
         Header: "Artist",
-        accessor: "track.artists[0].name",
+        accessor: "artistName",
       },
       {
         Header: "Album",
-        accessor: "track.album.name",
+        accessor: "albumName",
       },
     ],
     []

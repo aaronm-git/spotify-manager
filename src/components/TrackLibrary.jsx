@@ -83,9 +83,7 @@ const TrackLibrary = ({ columns, data }) => {
                   if (columnHeader === "#") {
                     return <td {...cell.getCellProps()}>{++i + pageIndex * pageSize}</td>;
                   } else {
-                    const trackUri = row.original.track.uri;
-                    const artistUri = row.original.track.artists[0].uri;
-                    const albumUri = row.original.track.album.uri;
+                    const { trackUri, artistUri, albumUri } = row.original;
                     let uri = "";
                     if (columnHeader === "Name") uri = trackUri;
                     else if (columnHeader === "Artist") uri = artistUri;

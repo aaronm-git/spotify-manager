@@ -157,7 +157,18 @@ const App = () => {
       console.error(error.message);
     }
     setIsLoading(false);
-    setSavedTracksData(savedTracks);
+    setSavedTracksData(
+      savedTracks.map((data) => ({
+        id: data.track.id,
+        trackName: data.track.name,
+        albumName: data.track.album.name,
+        artistName: data.track.artists[0].name,
+        trackUri: data.track.uri,
+        artistUri: data.track.artists[0].uri,
+        albumUri: data.track.album.uri,
+        trackData: data.track,
+      }))
+    );
   }, [setSavedTracksData]);
 
   useEffect(() => {
