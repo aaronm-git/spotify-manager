@@ -30,7 +30,7 @@ const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
       .map((x) => ({ ...x[0], numOfDuplicates: x.length }))
       .value();
 
-    const dupsByArtistName = _(savedTracksData)
+    let dupsByArtistName = _(savedTracksData)
       .filter((track) => !_.includes(dupsById, (dup) => dup.id === track.id))
       .reduce((acc, curr) => {
         const checkIfAlreadyExist = () => {
@@ -39,13 +39,6 @@ const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
               data.albumName !== curr.albumName &&
               data.artistName === curr.artistName &&
               data.trackName === curr.trackName
-              //   !_.some(
-              //     acc,
-              //     (track) =>
-              //       track.albumName !== curr.albumName &&
-              //       track.artistName === curr.artistName &&
-              //       track.trackName === curr.trackName
-              //   )
             );
           });
         };
@@ -56,7 +49,24 @@ const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
           return [...acc, curr];
         }
       }, [])
-      .map((x) => ({ ...x, numOfDuplicates: 2 }));
+      .reduce((acc, curr, i, array) => {
+        const dups = _.filter(
+          array,
+          (data) => data.artistName === curr.artistName && data.trackName === curr.trackName
+        );
+
+        dups.forEach((dup) => {
+          dup.dupId = i;
+        });
+
+        const numOfDuplicates = dups.length;
+
+        curr.numOfDuplicates = numOfDuplicates;
+
+        if (_.some(acc, (a) => a.dupId === curr.dupId)) {
+          return acc;
+        } else return [...acc, curr];
+      }, []);
 
     const duplicates = _.concat(dupsById, dupsByArtistName);
 
