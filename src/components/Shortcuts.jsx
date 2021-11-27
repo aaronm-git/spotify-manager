@@ -1,8 +1,10 @@
-import React from "react";
-import { Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Spinner } from "react-bootstrap";
 import { BsFileMinusFill } from "react-icons/bs";
-import _, { find } from "lodash";
+import _ from "lodash";
 import axios from "axios";
+
+const loadingSpinner = <Spinner animation="border" size="sm" />;
 
 const removeTracksForCurrentUser = async (params) => {
   console.log("delete Request started");
@@ -18,70 +20,78 @@ const removeTracksForCurrentUser = async (params) => {
 };
 
 const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
+  const [loading, setLoading] = useState([false, ""]);
+
   const handleDeleteDuplicates = () => {
+    setLoading([true, "handleDeleteDuplicates"]);
     const dupsById = _(savedTracksData)
       .groupBy("id")
       .filter((x) => x.length > 1)
-      .map((x) => ({
-        ...x,
-        numOfDuplicates: x.length,
-      }))
+      .map((x) => ({ ...x[0], numOfDuplicates: x.length }))
       .value();
-    // const dupsByArtistName = savedTracksData
-    //   .filter((currentVal) => {
-    //     return _.some(savedTracksData, (item) => {
-    //       return (
-    //         item.track.album.name !== currentVal.track.album.name &&
-    //         item.track.artists[0].name === currentVal.track.artists[0].name &&
-    //         item.track.name === currentVal.track.name &&
-    //         _.includes(dupsById, (data) => item.track.id !== data.id)
-    //       );
-    //     });
-    //   })
-    //   .map((x) => ({
-    //     id: x.track.id,
-    //     name: x.track.name,
-    //     artist: x.track.artists[0].name,
-    //     album: x.track.album.name,
-    //     numOfDuplicates: 2,
-    //   }));
-    // console.log(dupsByArtistName);
-    // const duplicates = _.concat(dupsById, dupsByArtistName);
-    const duplicates = dupsById;
+
+    const dupsByArtistName = _(savedTracksData)
+      .filter((track) => !_.includes(dupsById, (dup) => dup.id === track.id))
+      .reduce((acc, curr) => {
+        const checkIfAlreadyExist = () => {
+          return !_.some(savedTracksData, (data) => {
+            return (
+              data.albumName !== curr.albumName &&
+              data.artistName === curr.artistName &&
+              data.trackName === curr.trackName
+              //   !_.some(
+              //     acc,
+              //     (track) =>
+              //       track.albumName !== curr.albumName &&
+              //       track.artistName === curr.artistName &&
+              //       track.trackName === curr.trackName
+              //   )
+            );
+          });
+        };
+
+        if (checkIfAlreadyExist(curr)) {
+          return acc;
+        } else {
+          return [...acc, curr];
+        }
+      }, [])
+      .map((x) => ({ ...x, numOfDuplicates: 2 }));
+
+    const duplicates = _.concat(dupsById, dupsByArtistName);
 
     const chunkedIds = _(duplicates)
-      .flatMap((dups) => {
-        console.log(dups);
-        const flatArr = [];
-        for (let i = 1; i < dups.numOfDuplicates; i++) {
-          flatArr.push(dups[i].id);
+      .flatMap((dup) => {
+        const numOfDuplicates = [];
+        for (let i = 1; i < dup.numOfDuplicates; i++) {
+          numOfDuplicates.push(dup.id);
         }
-        return flatArr;
+        return numOfDuplicates;
       })
       .chunk(50)
       .value();
 
-    console.log(chunkedIds);
     let removedDups = [...savedTracksData];
     chunkedIds.forEach((idChunk) => {
       let params = "?ids=" + _.toString(idChunk);
+      // removeTracksForCurrentUser(params); // Send Delete requests
+
       idChunk.forEach((id) => {
-        const index = _.findIndex(removedDups, (data) => data.id === id);
-        console.log("removed: ", removedDups[index].trackName);
-        removedDups.splice(index, 1);
+        removedDups = _(removedDups)
+          .remove((data) => data.id !== id)
+          .value();
+        //   const index = _.findIndex(removedDups, (data) => data.id === id);
+        //   removedDups.splice(index, 1);
       });
-      try {
-        // removeTracksForCurrentUser(params);
-      } catch (error) {
-        console.log(error);
-      }
     });
     setSavedTracksData(removedDups);
     console.log("Delete Completed!");
+    setLoading([false, ""]);
   };
+
   return (
-    <Button variant="warning" onClick={handleDeleteDuplicates}>
-      Delete Duplicates
+    <Button variant="danger" onClick={handleDeleteDuplicates} disabled={loading[0]}>
+      {loading[0] && loading[1] === "handleDeleteDuplicates" && loadingSpinner} Delete Duplicates
       <BsFileMinusFill className="icon" />
     </Button>
   );

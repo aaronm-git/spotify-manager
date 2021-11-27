@@ -168,6 +168,7 @@ const App = () => {
         albumUri: data.track.album.uri,
         trackData: data.track,
       }))
+      // .filter((x) => x.artistName === "Billie Eilish")
     );
   }, [setSavedTracksData]);
 
