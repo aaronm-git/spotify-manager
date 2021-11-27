@@ -1,6 +1,8 @@
+/** @jsxImportSource @emotion/react */
 import { useState } from "react";
 import { Row, Col, Table, Pagination, Form } from "react-bootstrap";
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce } from "react-table";
+import { css } from "@emotion/react";
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -116,32 +118,64 @@ const TrackLibrary = ({ columns, data }) => {
         Showing page {pageIndex + 1} of {pageCount} | Total rows: {rows.length}
       </p>
 
-      <Pagination size="sm" className="unselectable">
-        <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-        {/* <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} /> */}
-
+      <Pagination size="sm" className="unselectable" css={paginationStyle}>
+        {/* First page */}
+        <Pagination.First css={paginationHideOnLg} onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
         {/* previous page index */}
-        {pageIndex > 1 && <Pagination.Item onClick={() => gotoPage(pageIndex - 2)}>{pageIndex - 1}</Pagination.Item>}
-        {pageIndex > 0 && <Pagination.Item onClick={() => gotoPage(pageIndex - 1)}>{pageIndex}</Pagination.Item>}
-
+        <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
+        {pageIndex > 1 && (
+          <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex - 2)}>
+            {pageIndex - 1}
+          </Pagination.Item>
+        )}
+        {pageIndex > 0 && (
+          <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex - 1)}>
+            {pageIndex}
+          </Pagination.Item>
+        )}
         {/* current page */}
-        <Pagination.Item active>
+        <Pagination.Item css={paginationHideOnSm} active>
           <strong>{pageIndex + 1}</strong>
         </Pagination.Item>
-
         {/* next page index */}
+        <Pagination.Next css={paginationHideOnLg} onClick={() => nextPage()} disabled={!canNextPage} />
+
         {pageIndex < pageCount - 1 && (
-          <Pagination.Item onClick={() => gotoPage(pageIndex + 1)}>{pageIndex + 2}</Pagination.Item>
+          <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex + 1)}>
+            {pageIndex + 2}
+          </Pagination.Item>
         )}
         {pageIndex < pageCount - 2 && (
-          <Pagination.Item onClick={() => gotoPage(pageIndex + 2)}>{pageIndex + 3}</Pagination.Item>
+          <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex + 2)}>
+            {pageIndex + 3}
+          </Pagination.Item>
         )}
-
-        {/* <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} /> */}
+        {/* Last page */}
         <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
       </Pagination>
     </>
   );
 };
+
+const paginationStyle = css`
+  @media (max-width: 425px) {
+    .page-link,
+    .page-item span {
+      padding: 0.5rem 0.8rem;
+    }
+  }
+`;
+
+const paginationHideOnSm = css`
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+const paginationHideOnLg = css`
+  @media (min-width: 992px) {
+    display: none;
+  }
+`;
 
 export default TrackLibrary;
