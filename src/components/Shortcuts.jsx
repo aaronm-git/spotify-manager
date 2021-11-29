@@ -84,7 +84,7 @@ const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
     let removedDups = [...savedTracksData];
     chunkedIds.forEach((idChunk) => {
       let params = "?ids=" + _.toString(idChunk);
-      // removeTracksForCurrentUser(params); // Send Delete requests
+      removeTracksForCurrentUser(params); // Send Delete requests
 
       idChunk.forEach((id) => {
         removedDups = _(removedDups)

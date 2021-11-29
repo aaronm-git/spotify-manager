@@ -7,7 +7,7 @@ import Settings from "./components/Settings";
 import axios from "axios";
 import _ from "lodash";
 // import TrackData from "../3-tracks.json";
-import TrackData from "./all-my-tracks.json";
+// import TrackData from "./all-my-tracks.json";
 
 const base64Authorization = `${window.btoa(
   `${process.env.REACT_APP_SPOTIFY_CLIENT_ID}:${process.env.REACT_APP_SPOTIFY_SECRET}`
@@ -136,23 +136,23 @@ const App = () => {
 
   const getUserSavedTracks = useCallback(async () => {
     setIsLoading(true);
-    let savedTracks = TrackData;
+    let savedTracks = [];
     try {
       await getRefreshAccessToken();
       let hasNext = true;
       let loop = 0;
       let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-      // while (hasNext && loop <= 3) {
-      //   loop++;
-      //   const response = await axios.get(url, {
-      //     headers: {
-      //       authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      //     },
-      //   });
-      //   savedTracks = [...savedTracks, ...response.data.items];
-      //   if (response.data.next) url = response.data.next;
-      //   else hasNext = false;
-      // }
+      while (hasNext) {
+        loop++;
+        const response = await axios.get(url, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        savedTracks = [...savedTracks, ...response.data.items];
+        if (response.data.next) url = response.data.next;
+        else hasNext = false;
+      }
     } catch (error) {
       console.error(error.message);
     }
