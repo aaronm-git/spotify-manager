@@ -79,7 +79,7 @@ const App = () => {
     let url = getAuthorizationUrl;
     url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
     url += "&response_type=code";
-    url += "&redirect_uri=http://localhost:3000/callback/";
+    url += "&redirect_uri=https://practical-leakey-f6642d.netlify.app/callback/";
     url += "&scope=" + authScopes.join(" ");
     window.location.href = url;
   };
@@ -95,7 +95,7 @@ const App = () => {
     } else if (params.code) {
       let body = "grant_type=authorization_code";
       body += "&code=" + params.code;
-      body += "&redirect_uri=" + encodeURI("http://localhost:3000/callback/");
+      body += "&redirect_uri=" + encodeURI("https://practical-leakey-f6642d.netlify.app/callback/");
       return axios
         .post(`https://accounts.spotify.com/api/token`, body, {
           headers: {
