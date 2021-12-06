@@ -12,9 +12,6 @@ const Dashboard = ({ savedTracksData, setSavedTracksData, isLoading }) => {
     () => [
       {
         Header: "#",
-        // accessor: (originalRow, rowIndex) => {
-        //   return rowIndex + 1;
-        // },
       },
       {
         Header: "Name",
