@@ -17,7 +17,7 @@ const removeTracksForCurrentUser = async (params) => {
   }
 };
 
-const DeleteDuplicates = ({ savedTracksData, setSavedTracksData }) => {
+const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) => {
   const handleDeleteDuplicates = () => {
     if (window.confirm('Warning! Pressing "Ok" will affect your account!')) {
       const dupsById = _(savedTracksData)
@@ -97,7 +97,7 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData }) => {
   };
 
   return (
-    <Button variant="danger" onClick={handleDeleteDuplicates}>
+    <Button variant="danger" onClick={handleDeleteDuplicates} className={className}>
       Delete Duplicates
       <BsFileMinusFill className="icon" />
     </Button>
