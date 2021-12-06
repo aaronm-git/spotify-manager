@@ -15,32 +15,39 @@ const base64Authorization = `${window.btoa(
 
 const authScopes = [
   //Images
-  "ugc-image-upload",
+  // "ugc-image-upload",
+
   //Playlists
-  "playlist-modify-private",
-  "playlist-read-private",
-  "playlist-modify-public",
-  "playlist-read-collaborative",
+  // "playlist-modify-private",
+  // "playlist-read-private",
+  // "playlist-modify-public",
+  // "playlist-read-collaborative",
+
   //Users
   "user-read-private",
   "user-read-email",
+
   //Spotify Connect
-  "user-read-playback-state",
-  "user-modify-playback-state",
-  "user-read-currently-playing",
+  // "user-read-playback-state",
+  // "user-modify-playback-state",
+  // "user-read-currently-playing",
+
   //Library
   "user-library-modify",
   "user-library-read",
+
   //Listening History
-  "user-read-playback-position",
-  "user-read-recently-played",
-  "user-top-read",
+  // "user-read-playback-position",
+  // "user-read-recently-played",
+  // "user-top-read",
+
   //Playback
-  "app-remote-control",
-  "streaming",
+  // "app-remote-control",
+  // "streaming",
+
   //Follow
-  "user-follow-modify",
-  "user-follow-read",
+  // "user-follow-modify",
+  // "user-follow-read",
 ];
 
 const getRefreshAccessToken = async () => {
