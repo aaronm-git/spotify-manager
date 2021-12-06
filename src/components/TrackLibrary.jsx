@@ -120,7 +120,7 @@ const TrackLibrary = ({ columns, data }) => {
 
       <Pagination size="sm" className="unselectable" css={paginationStyle}>
         {/* First page */}
-        <Pagination.First css={paginationHideOnLg} onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+        <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
         {/* previous page index */}
         <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
         {pageIndex > 1 && (
@@ -137,8 +137,6 @@ const TrackLibrary = ({ columns, data }) => {
         <Pagination.Item css={paginationHideOnSm} active>
           <strong>{pageIndex + 1}</strong>
         </Pagination.Item>
-        {/* next page index */}
-        <Pagination.Next css={paginationHideOnLg} onClick={() => nextPage()} disabled={!canNextPage} />
 
         {pageIndex < pageCount - 1 && (
           <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex + 1)}>
@@ -150,6 +148,8 @@ const TrackLibrary = ({ columns, data }) => {
             {pageIndex + 3}
           </Pagination.Item>
         )}
+        {/* next page index */}
+        <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
         {/* Last page */}
         <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
       </Pagination>
@@ -168,12 +168,6 @@ const paginationStyle = css`
 
 const paginationHideOnSm = css`
   @media (max-width: 992px) {
-    display: none;
-  }
-`;
-
-const paginationHideOnLg = css`
-  @media (min-width: 992px) {
     display: none;
   }
 `;
