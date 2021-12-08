@@ -31,13 +31,15 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) =>
           const checkIfAlreadyExist = () => {
             return !_.some(savedTracksData, (data) => {
               return (
-                data.albumName !== curr.albumName &&
-                data.artistName === curr.artistName &&
-                data.trackName === curr.trackName
+                (data.albumName !== curr.albumName &&
+                  data.artistName === curr.artistName &&
+                  data.trackName === curr.trackName) ||
+                (data.albumName === curr.albumName &&
+                  data.artistName === curr.artistName &&
+                  data.trackName === curr.trackName)
               );
             });
           };
-
           if (checkIfAlreadyExist(curr)) {
             return acc;
           } else {
