@@ -5,7 +5,6 @@ import _ from "lodash";
 import axios from "axios";
 
 const removeTracksForCurrentUser = async (params) => {
-  console.log("Delete request started");
   try {
     await axios.delete("https://api.spotify.com/v1/me/tracks" + params, {
       headers: {
@@ -89,7 +88,6 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) =>
         });
       });
       setSavedTracksData(removedDups);
-      console.log("Delete Completed!");
     } else {
       // Do nothing!
       console.log("Delete Duplicate function aborted! Nothing was changed.");

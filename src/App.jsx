@@ -87,7 +87,7 @@ const App = () => {
     url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
     url += "&response_type=code";
     url += `&redirect_uri=${
-      process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://practical-leakey-f6642d.netlify.app"
+      process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
     }/callback/`;
     url += "&scope=" + authScopes.join(" ");
     window.location.href = url;
@@ -108,9 +108,7 @@ const App = () => {
         "&redirect_uri=" +
         encodeURI(
           `${
-            process.env.NODE_ENV === "development"
-              ? "http://localhost:3000"
-              : "https://practical-leakey-f6642d.netlify.app"
+            process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
           }/callback/`
         );
       return axios

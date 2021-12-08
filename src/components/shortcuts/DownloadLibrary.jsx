@@ -4,7 +4,6 @@ import { FaFileCsv } from "react-icons/fa";
 import _ from "lodash";
 
 const getCsvData = (savedTracksData) => {
-  console.log(savedTracksData[0]);
   const csvData = [["Track Name", "Artist Name", "Album Name", "id", "Artist id", "Album id"]];
   _.forEach(savedTracksData, (data) => {
     const trackDetails = [
