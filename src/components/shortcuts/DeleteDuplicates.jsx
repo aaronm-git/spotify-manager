@@ -25,18 +25,40 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) =>
         .map((x) => ({ ...x[0], numOfDuplicates: x.length }))
         .value();
 
+      const dupsByDiffId = _.chain(savedTracksData)
+        .reduce((acc, curr) => {
+          if (
+            _.some(
+              savedTracksData,
+              (data) =>
+                data.albumName === curr.albumName &&
+                data.artistName === curr.artistName &&
+                data.trackName === curr.trackName &&
+                data.id !== curr.id
+            )
+          )
+            return [...acc, curr];
+          else return acc;
+        }, [])
+        // .uniqWith(
+        //   (trackA, trackB) =>
+        //     trackA.trackName === trackB.trackName &&
+        //     trackA.artistName === trackB.artistName &&
+        //     trackA.albumName === trackB.albumName
+        // )
+        .value();
+
+      console.log(dupsByDiffId);
+
       let dupsByArtistName = _(savedTracksData)
         .filter((track) => !_.includes(dupsById, (dup) => dup.id === track.id))
         .reduce((acc, curr) => {
           const checkIfAlreadyExist = () => {
             return !_.some(savedTracksData, (data) => {
               return (
-                (data.albumName !== curr.albumName &&
-                  data.artistName === curr.artistName &&
-                  data.trackName === curr.trackName) ||
-                (data.albumName === curr.albumName &&
-                  data.artistName === curr.artistName &&
-                  data.trackName === curr.trackName)
+                data.albumName !== curr.albumName &&
+                data.artistName === curr.artistName &&
+                data.trackName === curr.trackName
               );
             });
           };
@@ -65,7 +87,8 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) =>
           } else return [...acc, curr];
         }, []);
 
-      const duplicates = _.concat(dupsById, dupsByArtistName);
+      // const duplicates = _.concat(dupsById, dupsByDiffId, dupsByArtistName);
+      const duplicates = dupsByDiffId;
 
       const chunkedIds = _(duplicates)
         .flatMap((dup) => {
@@ -81,11 +104,18 @@ const DeleteDuplicates = ({ savedTracksData, setSavedTracksData, className }) =>
       let removedDups = [...savedTracksData];
       chunkedIds.forEach((idChunk) => {
         let params = "?ids=" + _.toString(idChunk);
+
         removeTracksForCurrentUser(params); // Send Delete requests
 
         idChunk.forEach((id) => {
           removedDups = _(removedDups)
             .remove((data) => data.id !== id)
+            .uniqWith(
+              (trackA, trackB) =>
+                trackA.trackName === trackB.trackName &&
+                trackA.artistName === trackB.artistName &&
+                trackA.albumName === trackB.albumName
+            )
             .value();
         });
       });
