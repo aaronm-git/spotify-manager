@@ -1,6 +1,6 @@
 import React from "react";
-import DeleteDuplicates from "./shortcuts/DeleteDuplicates";
-import DownloadLibrary from "./shortcuts/DownloadLibrary";
+import DeleteDuplicates from "./DeleteDuplicates";
+import DownloadLibrary from "./DownloadLibrary";
 
 const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
   return (

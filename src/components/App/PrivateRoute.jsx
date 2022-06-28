@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Route, Redirect, useLocation } from "react-router-dom";
-import SpotifyContext from "../context/spotify/spotifyContext";
-import GlobalContext from "../context/GlobalContext";
+import SpotifyContext from "../../context/spotify/spotifyContext";
+import GlobalContext from "../../context/GlobalContext";
 import { FaSkull } from "react-icons/fa";
 
 const PrivateRoute = (props) => {

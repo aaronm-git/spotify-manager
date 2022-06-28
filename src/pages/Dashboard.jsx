@@ -2,7 +2,7 @@
 import { useMemo, useEffect, useContext } from "react";
 import { Container, Card, Spinner } from "react-bootstrap";
 // import TrackLibrary from "./TrackLibrary";
-import Shortcuts from "./Shortcuts";
+import Shortcuts from "../components/shortcuts/Shortcuts";
 import { css } from "@emotion/react";
 import SpotifyContext from "../context/spotify/spotifyContext";
 

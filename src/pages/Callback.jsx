@@ -1,10 +1,10 @@
 import React, { useEffect, useContext } from "react";
-import { useQuery } from "../../utils";
+import { useQuery } from "../utils";
 import { Redirect, useHistory } from "react-router-dom";
-import SpotifyContext from "../../context/spotify/spotifyContext";
-import GlobalContext from "../../context/GlobalContext";
+import SpotifyContext from "../context/spotify/spotifyContext";
+import GlobalContext from "../context/GlobalContext";
 
-import Loading from "../layout/Loading";
+import Loading from "../components/layout/Loading";
 
 const Callback = () => {
   const history = useHistory();
