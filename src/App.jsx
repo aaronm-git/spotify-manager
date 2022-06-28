@@ -10,7 +10,9 @@ import Settings from "./components/Settings";
 import { GlobalState } from "./context/GlobalContext";
 import SpotifyState from "./context/spotify/spotifyState";
 import Callback from "./components/spotify/Callback";
-import CheckAuth from "./components/CheckAuth";
+import NotFoundPage from "./pages/404";
+import PrivateRoute from "./components/PrivateRoute";
+
 const App = () => {
   return (
     <GlobalState>
@@ -21,10 +23,9 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={AuthorizeApp} />
             <Route exact path="/callback" component={Callback} />
-            <CheckAuth>
-              <Route exact path="/dashboard" component={Dashboard} />
-              {/* <Route exact path="/settings" component={Settings} /> */}
-            </CheckAuth>
+            <PrivateRoute exact path="/dashboard" component={Dashboard} />
+            {/* <Route exact path="/settings" component={Settings} /> */}
+            <Route path="*" component={NotFoundPage} />
           </Switch>
         </Router>
       </SpotifyState>
