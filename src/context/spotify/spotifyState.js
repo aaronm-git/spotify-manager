@@ -1,8 +1,10 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect, useContext } from "react";
 import SpotifyContext from "./spotifyContext";
 import SpotifyReducer from "./spotifyReducer";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import GlobalContext from "../GlobalContext";
+import { FaSkull } from "react-icons/fa";
 
 const authScopes = [
   //Images
@@ -45,76 +47,147 @@ const base64Authorization = `${window.btoa(
   `${process.env.REACT_APP_SPOTIFY_CLIENT_ID}:${process.env.REACT_APP_SPOTIFY_SECRET}`
 )}`;
 
-const initialState = {
-  accessToken: "",
-  refreshToken: "",
-  user: {},
-  library: [],
+const initialState = JSON.parse(localStorage.getItem("state")) || {
+  expires_in: "",
+  token_updated: "",
+  access_token: "",
+  refresh_token: "",
+  user: null,
+  savedTracks: [],
   dupIds: [],
 };
 
-export const SpotifyProvider = ({ children }) => {
+const SpotifyState = ({ children }) => {
   const [state, dispatch] = useReducer(SpotifyReducer, initialState);
+  const { alert, setAlert, setLoading, setLoadingInfo } = useContext(GlobalContext);
+
+  useEffect(() => {
+    localStorage.setItem("state", JSON.stringify(state));
+  }, [state]);
+
+  const refreshStaleToken = () => {
+    console.log("refreshStaleToken() fired");
+    if (state.refresh_token.length) {
+      console.log(state.token_updated, new Date(state.token_updated));
+      const expired =
+        new Date(state.token_updated).setSeconds(new Date(state.token_updated).getSeconds() + state.expires_in) >=
+        new Date();
+      if (expired) refreshToken();
+    }
+  };
+  const refreshToken = async () => {
+    console.log("refreshToken() fired");
+    setLoading(true);
+    try {
+      let body = "grant_type=refresh_token";
+      body += "&code=" + state.refresh_token;
+      const response = await axios.post(`https://accounts.spotify.com/api/token`, body, {
+        headers: {
+          Authorization: "Basic " + base64Authorization,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+      dispatch({
+        type: "REFRESH_TOKEN",
+        payload: {
+          access_token: response.data.access_token,
+          expires_in: response.data.expires_in,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setAlert({ variant: "danger", icon: <FaSkull />, msg: error.message, show: true });
+    }
+    setLoading(false);
+  };
 
   const renderCallback = (props) => {
+    console.log("renderCallback() fired");
     getAccessToken(Object.fromEntries(new URLSearchParams(props.location.search)));
     return <Redirect to="/authorize" />;
   };
 
   const getAppAuthorization = () => {
-    const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
-    let url = getAuthorizationUrl;
-    url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-    url += "&response_type=code";
-    url += `&redirect_uri=${
-      process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
-    }/callback/`;
-    url += "&scope=" + authScopes.join(" ");
-    window.location.href = url;
+    console.log("getAppAuthorization() fired");
+    try {
+      const getAuthorizationUrl = "https://accounts.spotify.com/authorize";
+      let url = getAuthorizationUrl;
+      url += "?client_id=" + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+      url += "&response_type=code";
+      url += `&redirect_uri=${
+        process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
+      }/callback/`;
+      url += "&scope=" + authScopes.join(" ");
+      window.location.href = url;
+    } catch (error) {
+      setAlert({ variant: "danger", icon: <FaSkull />, msg: error.message, show: true });
+    }
   };
 
-  const getAccessToken = (params) => {
-    let body = "grant_t ype=authorization_code";
-    body += "&code=" + params.code;
-    body +=
-      "&redirect_uri=" +
-      encodeURI(
-        `${
-          process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
-        }/callback/`
-      );
-    axios
-      .post(`https://accounts.spotify.com/api/token`, body, {
+  const getAccessToken = async (code) => {
+    console.log("getAccessToken() fired");
+    setLoading(true);
+    try {
+      let body = "grant_type=authorization_code";
+      body += "&code=" + code;
+      body +=
+        "&redirect_uri=" +
+        encodeURI(
+          `${
+            process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://spotifyshortcuts.netlify.app"
+          }/callback/`
+        );
+
+      setLoadingInfo("Requesting token");
+      const response = await axios.post(`https://accounts.spotify.com/api/token`, body, {
         headers: {
           Authorization: "Basic " + base64Authorization,
           "Content-Type": "application/x-www-form-urlencoded",
         },
-      })
-      .then((response) => {
-        localStorage.setItem("access_token", response.data.access_token);
-        localStorage.setItem("refresh_token", response.data.refresh_token);
-        dispatch({
-          type: "GET_TOKEN",
-          payload: {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-          },
-        });
       });
+      const userResponse = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          authorization: `Bearer ${response.data.access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      dispatch({
+        type: "GET_TOKEN_GET_USER",
+        payload: {
+          access_token: response.data.access_token,
+          refresh_token: response.data.refresh_token,
+          expires_in: response.data.expires_in,
+          user: userResponse.data,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setAlert({ ...alert, variant: "danger", msg: error.message, icon: <FaSkull className="mb-1" />, show: true });
+    }
+    setLoading(false);
   };
 
   const getCurrentUserProfile = async () => {
-    const response = await axios.get("https://api.spotify.com/v1/me", {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        "Content-Type": "application/json",
-      },
-    });
-    dispatch({ type: "GET_CURRENT_USER", payload: response.data });
-    localStorage.setItem("user_profile", JSON.stringify(response.data));
+    console.log("getCurrentUserProfile() fired");
+    try {
+      refreshStaleToken();
+      const response = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      dispatch({ type: "GET_CURRENT_USER", payload: response.data });
+      return;
+    } catch (error) {
+      console.error(error);
+      setAlert({ variant: "danger", msg: error.message, icon: <FaSkull />, show: true });
+    }
   };
 
   const getUserSavedTracks = async () => {
+    console.log("getUserSavedTracks() fired");
+    refreshStaleToken();
     let savedTracks = [];
     let hasNext = true;
     let loop = 0;
@@ -142,15 +215,18 @@ export const SpotifyProvider = ({ children }) => {
       trackData: data.track,
     }));
 
-    dispatch({ type: "GET_LIBRARY", payload: { library: savedTracks } });
+    dispatch({ type: "GET_LIBRARY", payload: { savedTracks } });
   };
 
   return (
     <SpotifyContext.Provider
       value={{
-        authenticated: state.authenticated,
-        library: state.library,
-        dupIds: state.dupIds,
+        ...state,
+        renderCallback,
+        getAppAuthorization,
+        getAccessToken,
+        getCurrentUserProfile,
+        getUserSavedTracks,
       }}
     >
       {children}
@@ -158,4 +234,4 @@ export const SpotifyProvider = ({ children }) => {
   );
 };
 
-export default SpotifyProvider;
+export default SpotifyState;

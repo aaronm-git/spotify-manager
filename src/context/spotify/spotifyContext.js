@@ -1,3 +1,3 @@
 import { createContext } from "react";
-const SpotifyContext = createContext("");
+const SpotifyContext = createContext();
 export default SpotifyContext;

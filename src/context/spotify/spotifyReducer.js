@@ -3,20 +3,40 @@ const SpotifyReducer = (state, action) => {
     case "GET_TOKEN":
       return {
         ...state,
-        accessToken: action.access_token,
-        refreshToken: action.refreshToken,
+        access_token: action.payload.access_token,
+        refresh_token: action.payload.refresh_token,
+        expires_in: action.payload.expires_in,
+        token_updated: new Date(),
+      };
+
+    case "GET_TOKEN_GET_USER":
+      return {
+        ...state,
+        access_token: action.payload.access_token,
+        refresh_token: action.payload.refresh_token,
+        expires_in: action.payload.expires_in,
+        token_updated: new Date(),
+        user: action.payload.user,
+      };
+
+    case "REFRESH_TOKEN":
+      return {
+        ...state,
+        access_token: action.payload.access_token,
+        expires_in: action.payload.expires_in,
+        token_updated: new Date(),
       };
 
     case "GET_LIBRARY":
       return {
         ...state,
-        library: action.library,
+        savedTracks: action.payload,
       };
 
     case "GET_CURRENT_USER":
       return {
         ...state,
-        user: action,
+        user: action.payload,
       };
 
     default:

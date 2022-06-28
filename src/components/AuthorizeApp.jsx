@@ -1,11 +1,13 @@
+import React, { useContext } from "react";
+import SpotifyContext from "../context/spotify/spotifyContext";
+
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { BsSpotify } from "react-icons/bs";
-import { Redirect } from "react-router";
 
-const AuthorizeApp = ({ getAppAuthorization, isAppAuthorized }) => {
-  return isAppAuthorized ? (
-    <Redirect to="/" />
-  ) : (
+const AuthorizeApp = () => {
+  const spotifyContext = useContext(SpotifyContext);
+  const { getAppAuthorization } = spotifyContext;
+  return (
     <Container className="mt-5">
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
