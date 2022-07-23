@@ -18,11 +18,11 @@ const Header = () => {
         </Container>
       </Navbar>
       {user && (
-        <div className="bg-primary py-2" variant="dark">
+        <div className="bg-primary py-2">
           <Container>
-            <p className="text-end m-0">
-              Logged in as: {user.display_name}
-              <Link to="/settings" className="text-white">
+            <p className="text-dark text-end m-0">
+              Logged in as: <strong>{user.display_name}</strong>
+              <Link to="/settings" className="text-dark">
                 <BsFillGearFill className="icon" />
               </Link>
             </p>

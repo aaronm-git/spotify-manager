@@ -1,10 +1,15 @@
-import React, { useReducer, useEffect, useContext } from "react";
+import React, { useReducer, useEffect, useContext, useState } from "react";
 import SpotifyContext from "./spotifyContext";
 import SpotifyReducer from "./spotifyReducer";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import GlobalContext from "../GlobalContext";
 import { FaSkull } from "react-icons/fa";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+dayjs.extend(isBetween);
+dayjs.extend(localizedFormat);
 
 const authScopes = [
   //Images
@@ -50,7 +55,7 @@ const base64Authorization = `${window.btoa(
 const initialState = JSON.parse(localStorage.getItem("state")) || {
   expires_in: "",
   token_updated: "",
-  access_token: "",
+  // access_token: "",
   refresh_token: "",
   user: null,
   savedTracks: [],
@@ -58,47 +63,57 @@ const initialState = JSON.parse(localStorage.getItem("state")) || {
 };
 
 const SpotifyState = ({ children }) => {
+  const [accessToken, setAccessToken] = useState("");
   const [state, dispatch] = useReducer(SpotifyReducer, initialState);
   const { alert, setAlert, setLoading, setLoadingInfo } = useContext(GlobalContext);
+  const history = useHistory();
 
   useEffect(() => {
     localStorage.setItem("state", JSON.stringify(state));
   }, [state]);
 
-  const refreshStaleToken = () => {
-    console.log("refreshStaleToken() fired");
-    if (state.refresh_token.length) {
-      console.log(state.token_updated, new Date(state.token_updated));
-      const expired =
-        new Date(state.token_updated).setSeconds(new Date(state.token_updated).getSeconds() + state.expires_in) >=
-        new Date();
-      if (expired) refreshToken();
+  const isTokenStale = async () => {
+    console.log("isTokenStale() fired");
+    let newToken = "";
+    if (state.refresh_token) {
+      const then = dayjs(state.token_updated);
+      const expiry = dayjs(then.add(state.expires_in, "seconds"));
+      const now = dayjs();
+      const NotExpired = now.isBetween(then, expiry, "millisecond", "[]");
+      if (NotExpired || accessToken === "") newToken = await refreshToken();
+    } else {
+      localStorage.clear();
+      history.push("/");
     }
+    return newToken;
   };
+
   const refreshToken = async () => {
     console.log("refreshToken() fired");
-    setLoading(true);
+    let newToken = "";
     try {
       let body = "grant_type=refresh_token";
-      body += "&code=" + state.refresh_token;
+      body += "&refresh_token=" + state.refresh_token;
       const response = await axios.post(`https://accounts.spotify.com/api/token`, body, {
         headers: {
           Authorization: "Basic " + base64Authorization,
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
+      newToken = response.data.access_token;
+      setAccessToken(newToken);
       dispatch({
         type: "REFRESH_TOKEN",
         payload: {
-          access_token: response.data.access_token,
+          // access_token: response.data.access_token,
           expires_in: response.data.expires_in,
         },
       });
     } catch (error) {
       console.error(error);
-      setAlert({ variant: "danger", icon: <FaSkull />, msg: error.message, show: true });
     }
-    setLoading(false);
+    console.log("refreshToken() ended");
+    return newToken;
   };
 
   const renderCallback = (props) => {
@@ -170,10 +185,10 @@ const SpotifyState = ({ children }) => {
   const getCurrentUserProfile = async () => {
     console.log("getCurrentUserProfile() fired");
     try {
-      refreshStaleToken();
+      const refreshedToken = await isTokenStale();
       const response = await axios.get("https://api.spotify.com/v1/me", {
         headers: {
-          authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          authorization: `Bearer ${refreshedToken ? refreshedToken : state.access_token}}`,
           "Content-Type": "application/json",
         },
       });
@@ -186,36 +201,50 @@ const SpotifyState = ({ children }) => {
   };
 
   const getUserSavedTracks = async () => {
-    console.log("getUserSavedTracks() fired");
-    refreshStaleToken();
+    setLoading(true);
     let savedTracks = [];
-    let hasNext = true;
-    let loop = 0;
-    let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-    while (hasNext) {
-      loop++;
-      const response = await axios.get(url, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      savedTracks = [...savedTracks, ...response.data.items];
-      if (response.data.next) url = response.data.next;
-      else hasNext = false;
+    let currentTrackNum = 0;
+    let totalTrackNum = 0;
+
+    try {
+      console.log("getUserSavedTracks() fired");
+      const refreshedToken = await isTokenStale();
+      console.log("getUserSavedTracks() started");
+      let hasNext = true;
+      let loop = 0;
+      let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
+      while (hasNext && loop <= 5) {
+        loop++;
+        const response = await axios.get(url, {
+          headers: {
+            authorization: `Bearer ${refreshedToken.length ? refreshedToken : accessToken}`,
+          },
+        });
+        savedTracks = [...savedTracks, ...response.data.items];
+        currentTrackNum += response.data.items.length;
+        totalTrackNum = response.data.total;
+        let loadingInfo = `Tracks Loaded ${currentTrackNum}/${totalTrackNum}`;
+        if (response.data.next) url = response.data.next;
+        else hasNext = false;
+        setLoadingInfo(loadingInfo);
+      }
+      // dispatch({ type: "GET_LIBRARY", payload: savedTracks });
+    } catch (error) {
+      console.error(error.message);
     }
-
-    savedTracks = savedTracks.map((data) => ({
-      id: data.track.id,
-      trackName: data.track.name,
-      albumName: data.track.album.name,
-      artistName: data.track.artists[0].name,
-      trackUri: data.track.uri,
-      artistUri: data.track.artists[0].uri,
-      albumUri: data.track.album.uri,
-      trackData: data.track,
-    }));
-
-    dispatch({ type: "GET_LIBRARY", payload: { savedTracks } });
+    setLoading(false);
+    setLoadingInfo("");
+    return savedTracks;
+    // savedTracks = savedTracks.map((data) => ({
+    //   id: data.track.id,
+    //   trackName: data.track.name,
+    //   albumName: data.track.album.name,
+    //   artistName: data.track.artists[0].name,
+    //   trackUri: data.track.uri,
+    //   artistUri: data.track.artists[0].uri,
+    //   albumUri: data.track.album.uri,
+    //   trackData: data.track,
+    // }));
   };
 
   return (

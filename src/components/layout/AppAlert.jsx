@@ -8,9 +8,11 @@ const AppAlert = () => {
   const globalContext = useContext(GlobalContext);
   const { alert, setAlert } = globalContext;
   useEffect(() => {
-    setInterval(() => {
-      setAlert({ ...alert, show: false });
-    }, 5000);
+    if (alert.show === true) {
+      setInterval(() => {
+        setAlert({ ...alert, show: false });
+      }, 5000);
+    }
   }, [alert]);
 
   return (

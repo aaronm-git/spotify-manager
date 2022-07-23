@@ -1,8 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { useState } from "react";
+
+import { useState, useContext, useEffect, useMemo, Fragment } from "react";
 import { Row, Col, Table, Pagination, Form } from "react-bootstrap";
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce } from "react-table";
 import { css } from "@emotion/react";
+import SpotifyContext from "../context/spotify/spotifyContext";
+import myTracks from "../all-tracks.json";
+import GlobalContext from "../context/GlobalContext";
+import Loading from "./layout/Loading";
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -28,8 +33,62 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   );
 };
 
-const TrackLibrary = ({ columns, data }) => {
-  // Use the state and functions returned from useTable to build your UI
+const TrackLibrary = () => {
+  const [library, setLibrary] = useState([]);
+  const spotifyContext = useContext(SpotifyContext);
+  const globalContext = useContext(GlobalContext);
+  const { getUserSavedTracks } = spotifyContext;
+  const { loading, setLoading } = globalContext;
+
+  console.log("rendered trackLibrary() component");
+
+  useEffect(() => {
+    // console.log("useeffect firing with timeout");
+    // setLoading(true);
+    // setTimeout(() => {
+    //   setLibrary(myTracks);
+    //   setLoading(false);
+    // }, 5000);
+
+    (async () => {
+      const tracks = await getUserSavedTracks();
+      setLibrary(tracks);
+    })();
+  }, []);
+
+  const data = useMemo(() => {
+    return library.map((libraryData) => ({
+      id: libraryData.track.id,
+      trackName: libraryData.track.name,
+      albumName: libraryData.track.album.name,
+      artistName: libraryData.track.artists[0].name,
+      trackUri: libraryData.track.uri,
+      artistUri: libraryData.track.artists[0].uri,
+      albumUri: libraryData.track.album.uri,
+      trackData: libraryData.track,
+    }));
+  }, [library]);
+
+  const columns = useMemo(() => {
+    return [
+      {
+        Header: "#",
+      },
+      {
+        Header: "Name",
+        accessor: "trackName",
+      },
+      {
+        Header: "Artist",
+        accessor: "artistName",
+      },
+      {
+        Header: "Album",
+        accessor: "albumName",
+      },
+    ];
+  }, []);
+
   const {
     getTableProps,
     headerGroups,
@@ -59,8 +118,10 @@ const TrackLibrary = ({ columns, data }) => {
     usePagination
   );
 
-  return (
-    <>
+  return loading ? (
+    <Loading />
+  ) : (
+    <Fragment>
       <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
 
       <Table bordered hover striped responsive variant="primary" {...getTableProps()}>
@@ -153,7 +214,7 @@ const TrackLibrary = ({ columns, data }) => {
         {/* Last page */}
         <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
       </Pagination>
-    </>
+    </Fragment>
   );
 };
 
