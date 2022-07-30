@@ -212,7 +212,7 @@ const SpotifyState = ({ children }) => {
       let hasNext = true;
       let loop = 0;
       let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-      while (hasNext && loop <= 5) {
+      while (hasNext && loop <= 1) {
         loop++;
         const response = await axios.get(url, {
           headers: {
@@ -236,7 +236,9 @@ const SpotifyState = ({ children }) => {
 
     // Process tracks
     savedTracks = savedTracks.map((data) => ({
-      id: data.track.id,
+      trackId: data.track.id,
+      artistId: data.track.artists[0].id,
+      albumId: data.track.album.id,
       trackName: data.track.name,
       albumName: data.track.album.name,
       artistName: data.track.artists[0].name,

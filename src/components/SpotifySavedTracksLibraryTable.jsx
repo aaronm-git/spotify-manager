@@ -77,6 +77,7 @@ const TrackLibrary = () => {
     {
       columns,
       data,
+      initialState: { hiddenColumns: ["trackId", "artistId", "albumId"] },
     },
     useGlobalFilter,
     useSortBy,
@@ -94,6 +95,7 @@ const TrackLibrary = () => {
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()} className="unselectable">
+              {console.log(headerGroup)}
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}

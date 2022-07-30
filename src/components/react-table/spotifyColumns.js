@@ -14,4 +14,16 @@ export const COLUMNS = [
     Header: "Album",
     accessor: "albumName",
   },
+  {
+    Header: "Track ID",
+    accessor: "trackId",
+  },
+  {
+    Header: "Artist ID",
+    accessor: "artistId",
+  },
+  {
+    Header: "Album ID",
+    accessor: "albumId",
+  },
 ];
