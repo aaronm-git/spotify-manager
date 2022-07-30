@@ -8,6 +8,8 @@ import SpotifyContext from "../context/spotify/spotifyContext";
 import myTracks from "../all-tracks.json";
 import GlobalContext from "../context/GlobalContext";
 import Loading from "./layout/Loading";
+import Shortcuts from "./shortcuts/Shortcuts";
+import { COLUMNS } from "./react-table/spotifyColumns";
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -37,57 +39,22 @@ const TrackLibrary = () => {
   const [library, setLibrary] = useState([]);
   const spotifyContext = useContext(SpotifyContext);
   const globalContext = useContext(GlobalContext);
-  const { getUserSavedTracks } = spotifyContext;
-  const { loading, setLoading } = globalContext;
+  const { getUserSavedTracks, spotifyLibrary, setSpotifyLibrary } = spotifyContext;
+  const { loading } = globalContext;
 
   console.log("rendered trackLibrary() component");
 
   useEffect(() => {
-    // console.log("useeffect firing with timeout");
-    // setLoading(true);
-    // setTimeout(() => {
-    //   setLibrary(myTracks);
-    //   setLoading(false);
-    // }, 5000);
-
     (async () => {
       const tracks = await getUserSavedTracks();
-      setLibrary(tracks);
+      setSpotifyLibrary(tracks);
     })();
+    // eslint-disable-next-line
   }, []);
 
-  const data = useMemo(() => {
-    return library.map((libraryData) => ({
-      id: libraryData.track.id,
-      trackName: libraryData.track.name,
-      albumName: libraryData.track.album.name,
-      artistName: libraryData.track.artists[0].name,
-      trackUri: libraryData.track.uri,
-      artistUri: libraryData.track.artists[0].uri,
-      albumUri: libraryData.track.album.uri,
-      trackData: libraryData.track,
-    }));
-  }, [library]);
+  const data = useMemo(() => spotifyLibrary, [spotifyLibrary]);
 
-  const columns = useMemo(() => {
-    return [
-      {
-        Header: "#",
-      },
-      {
-        Header: "Name",
-        accessor: "trackName",
-      },
-      {
-        Header: "Artist",
-        accessor: "artistName",
-      },
-      {
-        Header: "Album",
-        accessor: "albumName",
-      },
-    ];
-  }, []);
+  const columns = useMemo(() => COLUMNS, []);
 
   const {
     getTableProps,
@@ -97,8 +64,6 @@ const TrackLibrary = () => {
     state,
     setGlobalFilter,
     rows,
-
-    // The rest of these things are super handy, too ;)
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -122,6 +87,7 @@ const TrackLibrary = () => {
     <Loading />
   ) : (
     <Fragment>
+      <Shortcuts />
       <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
 
       <Table bordered hover striped responsive variant="primary" {...getTableProps()}>
@@ -144,15 +110,18 @@ const TrackLibrary = () => {
               <tr {...row.getRowProps()} className="text-nowrap">
                 {row.cells.map((cell) => {
                   const columnHeader = cell.column.Header;
+                  //  If the column header is "#", then render the row index
                   if (columnHeader === "#") {
                     return <td {...cell.getCellProps()}>{++i + pageIndex * pageSize}</td>;
                   } else {
-                    const { trackUri, artistUri, albumUri } = row.original;
-                    let uri = "";
-                    if (columnHeader === "Name") uri = trackUri;
-                    else if (columnHeader === "Artist") uri = artistUri;
-                    else if (columnHeader === "Album") uri = albumUri;
-
+                    // Otherwise, render the cell contents
+                    const { trackUri, artistUri, albumUri } = row.original; //  Get the track, artist, and album URIs from the row data
+                    let uri = ""; //  Initialize the URI variable
+                    if (columnHeader === "Name")
+                      uri = trackUri; //  If the column header is "Name", then set the URI to the track URI
+                    else if (columnHeader === "Artist")
+                      uri = artistUri; //  If the column header is "Artist", then set the URI to the artist URI
+                    else if (columnHeader === "Album") uri = albumUri; //  If the column header is "Album", then set the URI to the album URI
                     return (
                       <td {...cell.getCellProps()} className="position-relative">
                         {cell.render("Cell")}
@@ -175,10 +144,12 @@ const TrackLibrary = () => {
         </tbody>
       </Table>
 
+      {/* Pagination Information */}
       <p>
         Showing page {pageIndex + 1} of {pageCount} | Total rows: {rows.length}
       </p>
 
+      {/* Pagination Controls */}
       <Pagination size="sm" className="unselectable" css={paginationStyle}>
         {/* First page */}
         <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
@@ -198,7 +169,6 @@ const TrackLibrary = () => {
         <Pagination.Item css={paginationHideOnSm} active>
           <strong>{pageIndex + 1}</strong>
         </Pagination.Item>
-
         {pageIndex < pageCount - 1 && (
           <Pagination.Item css={paginationHideOnSm} onClick={() => gotoPage(pageIndex + 1)}>
             {pageIndex + 2}

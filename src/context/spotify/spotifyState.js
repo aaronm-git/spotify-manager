@@ -55,14 +55,13 @@ const base64Authorization = `${window.btoa(
 const initialState = JSON.parse(localStorage.getItem("state")) || {
   expires_in: "",
   token_updated: "",
-  // access_token: "",
   refresh_token: "",
   user: null,
-  savedTracks: [],
   dupIds: [],
 };
 
 const SpotifyState = ({ children }) => {
+  const [spotifyLibrary, setSpotifyLibrary] = useState([]);
   const [accessToken, setAccessToken] = useState("");
   const [state, dispatch] = useReducer(SpotifyReducer, initialState);
   const { alert, setAlert, setLoading, setLoadingInfo } = useContext(GlobalContext);
@@ -234,23 +233,28 @@ const SpotifyState = ({ children }) => {
     }
     setLoading(false);
     setLoadingInfo("");
+
+    // Process tracks
+    savedTracks = savedTracks.map((data) => ({
+      id: data.track.id,
+      trackName: data.track.name,
+      albumName: data.track.album.name,
+      artistName: data.track.artists[0].name,
+      trackUri: data.track.uri,
+      artistUri: data.track.artists[0].uri,
+      albumUri: data.track.album.uri,
+      trackData: data.track,
+    }));
+
     return savedTracks;
-    // savedTracks = savedTracks.map((data) => ({
-    //   id: data.track.id,
-    //   trackName: data.track.name,
-    //   albumName: data.track.album.name,
-    //   artistName: data.track.artists[0].name,
-    //   trackUri: data.track.uri,
-    //   artistUri: data.track.artists[0].uri,
-    //   albumUri: data.track.album.uri,
-    //   trackData: data.track,
-    // }));
   };
 
   return (
     <SpotifyContext.Provider
       value={{
         ...state,
+        spotifyLibrary,
+        setSpotifyLibrary,
         renderCallback,
         getAppAuthorization,
         getAccessToken,

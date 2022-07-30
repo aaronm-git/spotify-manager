@@ -1,13 +1,14 @@
 import React from "react";
 import DeleteDuplicates from "./DeleteDuplicates";
 import DownloadLibrary from "./DownloadLibrary";
-
-const Shortcuts = ({ savedTracksData, setSavedTracksData }) => {
+import ShowDuplicates from "./ShowDuplicates";
+const Shortcuts = ({ data }) => {
   return (
-    <>
-      <DeleteDuplicates savedTracksData={savedTracksData} setSavedTracksData={setSavedTracksData} className="mx-2" />
-      <DownloadLibrary savedTracksData={savedTracksData} />
-    </>
+    <div className="p-2">
+      {/* <DeleteDuplicates className="mx-2" /> */}
+      {/* <DownloadLibrary /> */}
+      <ShowDuplicates data={data} />
+    </div>
   );
 };
 

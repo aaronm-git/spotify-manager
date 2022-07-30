@@ -1,5 +1,6 @@
 import { Card } from "react-bootstrap";
-import TrackLibrary from "../components/TrackLibrary";
+import TrackLibrary from "../components/SpotifySavedTracksLibraryTable";
+
 const Dashboard = () => {
   return (
     <Card className="bg-dark text-white mt-2 shadow-lg">
