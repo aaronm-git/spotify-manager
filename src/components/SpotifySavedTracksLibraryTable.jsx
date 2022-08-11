@@ -2,14 +2,14 @@
 
 import { useState, useContext, useEffect, useMemo, Fragment } from "react";
 import { Row, Col, Table, Pagination, Form } from "react-bootstrap";
-import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce } from "react-table";
+import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce, useFilters } from "react-table";
 import { css } from "@emotion/react";
 import SpotifyContext from "../context/spotify/spotifyContext";
-import myTracks from "../all-tracks.json";
 import GlobalContext from "../context/GlobalContext";
 import Loading from "./layout/Loading";
 import Shortcuts from "./shortcuts/Shortcuts";
 import { COLUMNS } from "./react-table/spotifyColumns";
+import _ from "lodash";
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -35,8 +35,19 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   );
 };
 
+const showDuplicatesFilter = (rows, id, filterValue) => {
+  if (filterValue) {
+    return rows.filter((row) => {
+      const rowValues = row.values;
+      return rowValues.duplicate === true;
+    });
+  }
+  return rows;
+};
+
 const TrackLibrary = () => {
   const [library, setLibrary] = useState([]);
+  const [showDuplicatesFilter, setShowDuplicatesFilter] = useState(false);
   const spotifyContext = useContext(SpotifyContext);
   const globalContext = useContext(GlobalContext);
   const { getUserSavedTracks, spotifyLibrary, setSpotifyLibrary } = spotifyContext;
@@ -72,6 +83,7 @@ const TrackLibrary = () => {
     nextPage,
     previousPage,
     setPageSize,
+    preGlobalFilteredRows,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -80,6 +92,7 @@ const TrackLibrary = () => {
       initialState: { hiddenColumns: ["trackId", "artistId", "albumId"] },
     },
     useGlobalFilter,
+    useFilters,
     useSortBy,
     usePagination
   );
@@ -88,14 +101,12 @@ const TrackLibrary = () => {
     <Loading />
   ) : (
     <Fragment>
-      <Shortcuts />
+      <Shortcuts setShowDuplicatesFilter={setShowDuplicatesFilter} useFilters={useFilters} />
       <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
-
       <Table bordered hover striped responsive variant="primary" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()} className="unselectable">
-              {console.log(headerGroup)}
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}

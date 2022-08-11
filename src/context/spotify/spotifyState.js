@@ -8,6 +8,8 @@ import { FaSkull } from "react-icons/fa";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import allTracks from "../../data/allTracks.json";
+
 dayjs.extend(isBetween);
 dayjs.extend(localizedFormat);
 
@@ -201,36 +203,36 @@ const SpotifyState = ({ children }) => {
 
   const getUserSavedTracks = async () => {
     setLoading(true);
-    let savedTracks = [];
+    let savedTracks = [...allTracks];
     let currentTrackNum = 0;
     let totalTrackNum = 0;
 
-    try {
-      console.log("getUserSavedTracks() fired");
-      const refreshedToken = await isTokenStale();
-      console.log("getUserSavedTracks() started");
-      let hasNext = true;
-      let loop = 0;
-      let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
-      while (hasNext && loop <= 1) {
-        loop++;
-        const response = await axios.get(url, {
-          headers: {
-            authorization: `Bearer ${refreshedToken.length ? refreshedToken : accessToken}`,
-          },
-        });
-        savedTracks = [...savedTracks, ...response.data.items];
-        currentTrackNum += response.data.items.length;
-        totalTrackNum = response.data.total;
-        let loadingInfo = `Tracks Loaded ${currentTrackNum}/${totalTrackNum}`;
-        if (response.data.next) url = response.data.next;
-        else hasNext = false;
-        setLoadingInfo(loadingInfo);
-      }
-      // dispatch({ type: "GET_LIBRARY", payload: savedTracks });
-    } catch (error) {
-      console.error(error.message);
-    }
+    // try {
+    //   console.log("getUserSavedTracks() fired");
+    //   const refreshedToken = await isTokenStale();
+    //   console.log("getUserSavedTracks() started");
+    //   let hasNext = true;
+    //   let loop = 0;
+    //   let url = "https://api.spotify.com/v1/me/tracks?limit=50&market=US";
+    //   while (hasNext) {
+    //     loop++;
+    //     const response = await axios.get(url, {
+    //       headers: {
+    //         authorization: `Bearer ${refreshedToken.length ? refreshedToken : accessToken}`,
+    //       },
+    //     });
+    //     savedTracks = [...savedTracks, ...response.data.items];
+    //     currentTrackNum += response.data.items.length;
+    //     totalTrackNum = response.data.total;
+    //     let loadingInfo = `Tracks Loaded ${currentTrackNum}/${totalTrackNum}`;
+    //     if (response.data.next) url = response.data.next;
+    //     else hasNext = false;
+    //     setLoadingInfo(loadingInfo);
+    //   }
+    //   // dispatch({ type: "GET_LIBRARY", payload: savedTracks });
+    // } catch (error) {
+    //   console.error(error.message);
+    // }
     setLoading(false);
     setLoadingInfo("");
 

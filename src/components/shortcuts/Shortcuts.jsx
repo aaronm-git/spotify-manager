@@ -2,12 +2,13 @@ import React from "react";
 import DeleteDuplicates from "./DeleteDuplicates";
 import DownloadLibrary from "./DownloadLibrary";
 import ShowDuplicates from "./ShowDuplicates";
-const Shortcuts = ({ data }) => {
+const Shortcuts = (props) => {
   return (
-    <div className="p-2">
+    <div>
       {/* <DeleteDuplicates className="mx-2" /> */}
       {/* <DownloadLibrary /> */}
-      <ShowDuplicates data={data} />
+      <span className="d-block fw-light">Filters:</span>
+      <ShowDuplicates {...props} />
     </div>
   );
 };

@@ -1,6 +1,10 @@
-import { Fragment, useState, useContext } from "react";
+import { Fragment, useState, useEffect } from "react";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import _ from "lodash";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { solid, regular, brands } from "@fortawesome/fontawesome-svg-core/import.macro"; // <-- import styles to be used
+
 // id: libraryData.track.id,
 // trackName: libraryData.track.name,
 // albumName: libraryData.track.album.name,
@@ -10,14 +14,16 @@ import _ from "lodash";
 // albumUri: libraryData.track.album.uri,
 // trackData: libraryData.track,
 
-function ShowDuplicates({ data }) {
+function ShowDuplicates({ useFilters, setShowDuplicatesFilter }) {
   const [checked, setChecked] = useState(false);
-  const findDups = () => {
-    const notFiltered = data;
+
+  useEffect(() => {
     if (checked) {
-      data = _.uniqBy(data);
-    } else data = notFiltered;
-  };
+      setShowDuplicatesFilter(true);
+    }
+    // eslint-disable-next-line
+  }, [checked]);
+
   return (
     <Fragment>
       <ToggleButton
@@ -25,13 +31,15 @@ function ShowDuplicates({ data }) {
         variant="outline-primary"
         type="checkbox"
         checked={checked}
+        size="lg"
+        title="Show Duplicates"
         value="1"
         onChange={(e) => {
           setChecked(e.currentTarget.checked);
-          findDups();
         }}
       >
-        Show Duplicates
+        <FontAwesomeIcon icon={solid("clone")} />
+        <span className="visually-hidden">Show Duplicates</span>
       </ToggleButton>
     </Fragment>
   );
