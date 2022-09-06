@@ -1,5 +1,5 @@
 
-@import "~bootstrap/scss/_functions.scss"
+@import "/node_modules/bootstrap/scss/_functions.scss"
 
 $body-bg: #121212
 $body-color: #ffff
@@ -16,8 +16,8 @@ $dark: $spotify-dark
 
 $custom-colors: ("primary-dark": $spotify-green-dark, "darker": $spotify-darker, "lighter": $spotify-lighter)
 
-@import "~bootstrap/scss/variables"
-@import "~bootstrap/scss/mixins"
+@import "/node_modules/bootstrap/scss/variables"
+@import "/node_modules/bootstrap/scss/mixins"
 
 $theme-colors: map-merge($theme-colors, $custom-colors)
 $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value")
@@ -28,4 +28,4 @@ $utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg")
 
 // Pagination
 @import "./pagination"
-@import "~bootstrap/scss/bootstrap.scss"
+@import "/node_modules/bootstrap/scss/bootstrap.scss"
