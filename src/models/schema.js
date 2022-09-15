@@ -24,13 +24,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "roler": {
-                    "name": "roler",
+                "role": {
+                    "name": "role",
                     "isArray": false,
                     "type": {
                         "enum": "UserRoles"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -86,5 +86,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "c362952ab3e8099aba333464383ac468"
+    "version": "8e8158bf7698fd241f8c20dd3b426360"
 };

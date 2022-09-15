@@ -1,0 +1,15 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-spotifyshortcuts-staging-223622-authRole",
+      "UnauthRoleArn": "arn:aws:iam::021203009120:role/amplify-spotifyshortcuts-staging-223622-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::021203009120:role/amplify-spotifyshortcuts-staging-223622-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-spotifyshortcuts-staging-223622-deployment",
+      "UnauthRoleName": "amplify-spotifyshortcuts-staging-223622-unauthRole",
+      "StackName": "amplify-spotifyshortcuts-staging-223622",
+      "StackId": "arn:aws:cloudformation:us-east-1:021203009120:stack/amplify-spotifyshortcuts-staging-223622/a8ca25d0-347d-11ed-b5f6-12dec653b89d",
+      "AmplifyAppId": "d20h6p57dxzmed"
+    }
+  }
+}
