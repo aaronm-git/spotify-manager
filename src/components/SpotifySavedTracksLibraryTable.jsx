@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { useState, useContext, useEffect, useMemo, Fragment } from 'react';
-import { Row, Col, Table, Pagination, Form } from 'react-bootstrap';
+import { Row, Col, Table, Pagination, Form, ButtonGroup, ToggleButton } from 'react-bootstrap';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table';
 import { css } from '@emotion/react';
 import SpotifyContext from '../context/spotify/spotifyContext';
 import Loading from './layout/Loading';
 import { COLUMNS } from './react-table/spotifyColumns';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 	const [value, setValue] = useState(globalFilter);
@@ -37,8 +37,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 const TrackLibrary = () => {
 	const spotifyContext = useContext(SpotifyContext);
 	const { getUserSavedTracks, spotifyLibrary, setSpotifyLibrary } = spotifyContext;
-
-	const queryClient = useQueryClient();
+	const [checked, setChecked] = useState(false);
 
 	// Queries
 	const { data: useQueryData, isLoading, isError, error } = useQuery(['spotify-savedTracks'], getUserSavedTracks);
@@ -51,6 +50,22 @@ const TrackLibrary = () => {
 	const data = useMemo(() => spotifyLibrary || [], [spotifyLibrary]);
 
 	const columns = useMemo(() => COLUMNS, []);
+
+	const toggleShowDuplicates = () => {
+		if (checked) {
+			const duplicates = data.filter((item, index) => {
+				const exactDuplicate = data.indexOf(item) !== index;
+				const duplicateIds = data.filter((item2) => item2.trackId === item.trackId).length > 1;
+				// const duplicateName = data.filter((item2) => item2.trackName === item.trackName).length > 1;
+				// const duplicateArtist = data.filter((item2) => item2.artistId === item.artistId).length > 1;
+				// const duplicateAlbum = data.filter((item2) => item2.albumId === item.albumId).length > 1;
+				return exactDuplicate || duplicateIds;
+			});
+			setSpotifyLibrary(duplicates);
+		} else {
+			setSpotifyLibrary(useQueryData);
+		}
+	};
 
 	const {
 		getTableProps,
@@ -89,6 +104,11 @@ const TrackLibrary = () => {
 	} else
 		return (
 			<Fragment>
+				<ButtonGroup className="mb-2">
+					<ToggleButton id="toggle-check" type="checkbox" variant="outline-primary" checked={checked} value="1" onClick={() => setChecked(!checked)} onChange={() => toggleShowDuplicates()}>
+						Show Duplicates
+					</ToggleButton>
+				</ButtonGroup>
 				<GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
 				<Table bordered hover striped responsive variant="primary" {...getTableProps()}>
 					<thead>
