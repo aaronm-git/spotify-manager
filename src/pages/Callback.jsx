@@ -9,26 +9,15 @@ import Loading from '../components/layout/Loading';
 const Callback = () => {
 	const search = useURLQuery();
 	const spotifyCode = search.get('code');
-	const [token, setToken] = React.useState(null);
 
 	const tokenQuery = useQuery(['accessToken'], () => getToken(spotifyCode), {
 		staleTime: Infinity,
-		enabled: !!spotifyCode && token === null,
-		onError: (error) => {
-			console.log(error);
-		},
-		onSuccess: (data) => {
-			console.log('success', data);
-			setToken(data.accessToken);
-		},
+		enabled: !!spotifyCode,
 	});
 
 	const userQuery = useQuery(['user'], () => getUserProfile(tokenQuery?.data?.accessToken), {
 		enabled: tokenQuery?.data?.accessToken,
 		staleTime: 1000 * 60 * 5,
-		onError: (error) => {
-			console.log(error);
-		},
 	});
 
 	if (tokenQuery.isError || userQuery.isError) {

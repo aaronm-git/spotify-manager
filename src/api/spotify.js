@@ -69,7 +69,7 @@ export const getToken = async (spotifyCode) => {
 			scope: response.data.scope,
 		};
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
@@ -89,7 +89,7 @@ export const goAppAuthorization = () => {
 		url += '&scope=' + authScopes.join(' ');
 		window.location.href = url;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
@@ -109,7 +109,7 @@ export const getNewToken = (code) => {
 			data: 'grant_type=refresh_token&refresh_token=' + code,
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
@@ -129,7 +129,7 @@ export const getUserProfile = async (token) => {
 		});
 		return response.data;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
@@ -138,6 +138,7 @@ export const getUserProfile = async (token) => {
  */
 
 export const getUserSavedTracks = async (limit = 50) => {
+	console.log("Getting user's saved tracks");
 	try {
 		const savedTracks = [];
 		let total = 0;
@@ -157,7 +158,7 @@ export const getUserSavedTracks = async (limit = 50) => {
 		} while (nextUrl);
 		return { savedTracks, total };
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
@@ -188,7 +189,7 @@ export const deleteTracks = async (tracks, limit = 50) => {
 			});
 		}
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 
