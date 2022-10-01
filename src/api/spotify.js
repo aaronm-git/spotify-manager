@@ -70,6 +70,7 @@ export const getToken = async (spotifyCode) => {
 		};
 	} catch (error) {
 		console.error(error);
+		return error;
 	}
 };
 
@@ -115,11 +116,12 @@ export const getNewToken = (code) => {
 
 /**
  * Gets the user's profile from the Spotify API
+ * @param { String } token  - The token to be used for authorization
  */
 
 export const getUserProfile = async (token) => {
 	try {
-		const response = axios({
+		const response = await axios({
 			method: 'get',
 			url: 'https://api.spotify.com/v1/me',
 			headers: {
@@ -130,14 +132,19 @@ export const getUserProfile = async (token) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		return error;
 	}
 };
 
 /**
  * Gets the user's saved tracks from the Spotify API
+ * @param { String } token  - The token to be used for authentication
+ * @param { Number } limit  - The number of tracks to be returned
+ * @param { String } market - The market to be used
+ * @param { Number } offset - The offset to be used
  */
 
-export const getUserSavedTracks = async (limit = 50) => {
+export const getUserSavedTracks = async (token, limit = 50, market = null, offset = null) => {
 	console.log("Getting user's saved tracks");
 	try {
 		const savedTracks = [];
@@ -146,10 +153,10 @@ export const getUserSavedTracks = async (limit = 50) => {
 		do {
 			const response = await axios({
 				method: 'get',
-				url: 'https://api.spotify.com/v1/me/tracks?limit=' + limit,
+				url: 'https://api.spotify.com/v1/me/tracks?limit=' + limit + '&offset=' + offset + '&market=' + market,
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + base64Authorization,
+					Authorization: 'Bearer ' + token,
 				},
 			});
 			savedTracks.push(...response.data.items);
@@ -159,6 +166,7 @@ export const getUserSavedTracks = async (limit = 50) => {
 		return { savedTracks, total };
 	} catch (error) {
 		console.error(error);
+		return error;
 	}
 };
 

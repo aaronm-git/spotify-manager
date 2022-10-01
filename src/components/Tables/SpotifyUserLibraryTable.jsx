@@ -4,13 +4,13 @@ import { useState, useMemo, Fragment } from 'react';
 import { Row, Col, Table, Pagination, Form, ButtonGroup, ToggleButton, Button, Spinner } from 'react-bootstrap';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table';
 import { css } from '@emotion/react';
-import Loading from './layout/Loading';
-import { COLUMNS } from './react-table/spotifyColumns';
+import Loading from './Layouts/Loading';
+import COLUMNS from './Tables/COLUMNS';
 import _ from 'lodash';
 
 import { getUserSavedTracks } from '../api/spotify';
 
-import { useQuery, QueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 // const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 // 	const [value, setValue] = useState(globalFilter);
@@ -36,22 +36,25 @@ import { useQuery, QueryClient, useMutation } from '@tanstack/react-query';
 // 	);
 // };
 
-const TrackLibrary = () => {
+export default function SpotifyUserLibraryTable() {
 	// const [toggleDuplicateChecked, setToggleDuplicateChecked] = useState(false);
 	// const [savedTracks, setSavedTracks] = useState([]);
 	// Queries
+	const queryClient = useQueryClient();
+	const accessToken = queryClient.getQueryData('accessToken').accessToken;
+
 	const {
-		data: useQueryData,
+		data: savedTracks,
 		isLoading,
 		isError,
 		error,
-	} = useQuery(['spotify-savedTracks'], getUserSavedTracks, {
+	} = useQuery(['spotify-savedTracks'], () => getUserSavedTracks(accessToken), {
 		staleTime: 1000 /* Milliseconds */ * 60 /* Seconds */ * 60 /* Minutes */ * 1 /* Hours */,
 		refetchOnWindowFocus: false,
 		onError: (error) => console.log(error),
 	});
 
-	const data = useMemo(() => useQueryData || [], [useQueryData]);
+	const data = useMemo(() => savedTracks || [], [savedTracks]);
 
 	const columns = useMemo(() => COLUMNS, []);
 
@@ -277,7 +280,7 @@ const TrackLibrary = () => {
 				</Pagination>
 			</Fragment>
 		);
-};
+}
 
 const paginationStyle = css`
 	@media (max-width: 425px) {
@@ -293,5 +296,3 @@ const paginationHideOnSm = css`
 		display: none;
 	}
 `;
-
-export default TrackLibrary;

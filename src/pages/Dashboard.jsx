@@ -1,7 +1,9 @@
-import { Card } from 'react-bootstrap';
-import TrackLibrary from '../components/SpotifySavedTracksLibraryTable';
-import { useQueryClient } from '@tanstack/react-query';
 import { Redirect } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
+import { useQueryClient } from '@tanstack/react-query';
+
+// Components
+import SpotifyUserLibraryTable from '../components/Tables/SpotifyUserLibraryTable';
 
 const Dashboard = () => {
 	const queryClient = useQueryClient();

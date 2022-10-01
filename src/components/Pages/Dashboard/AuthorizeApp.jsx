@@ -6,8 +6,6 @@ import { BsSpotify } from 'react-icons/bs';
 import { Redirect } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
-import AlertContext from '../context/alerts/context';
-
 const handleGetAuth = () => {
 	const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 	const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
@@ -19,12 +17,6 @@ const handleGetAuth = () => {
 const AuthorizeApp = () => {
 	const queryClient = useQueryClient();
 	const user = queryClient.getQueryData(['spotifyUser']);
-
-	const { setAlert } = React.useContext(AlertContext);
-
-	React.useEffect(() => {
-		setAlert('INFO', 'Please authorize Spotify to use this app.');
-	}, []);
 
 	return user ? (
 		<Redirect to="/dashboard" />

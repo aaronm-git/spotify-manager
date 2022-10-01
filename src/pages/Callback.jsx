@@ -4,7 +4,7 @@ import { useURLQuery } from '../utils';
 import { getToken, getUserProfile } from '../api/spotify';
 import { Redirect } from 'react-router-dom';
 // components
-import Loading from '../components/layout/Loading';
+import Loading from '../components/Layouts/Loading';
 
 const Callback = () => {
 	const search = useURLQuery();
@@ -15,21 +15,24 @@ const Callback = () => {
 		enabled: !!spotifyCode,
 	});
 
+	console.log(tokenQuery.data);
+
 	const userQuery = useQuery(['user'], () => getUserProfile(tokenQuery?.data?.accessToken), {
-		enabled: tokenQuery?.data?.accessToken,
+		enabled: !!tokenQuery?.data?.accessToken,
 		staleTime: 1000 * 60 * 5,
 	});
 
-	if (tokenQuery.isError || userQuery.isError) {
-		console.error();
+	console.log(userQuery.data);
+
+	if (tokenQuery.isError) {
 		return <Redirect to="/" />;
 	}
 
-	if (tokenQuery.isLoading || userQuery.isLoading) {
+	if (tokenQuery.isLoading) {
 		return <Loading />;
 	}
 
-	return <Redirect to="/dashboard" />;
+	return <Redirect to="/" />;
 };
 
 export default Callback;
