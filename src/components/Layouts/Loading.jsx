@@ -1,6 +1,6 @@
 import { Spinner, Card } from 'react-bootstrap';
 
-const Loading = () => {
+export default function Loading() {
 	return (
 		<Card bg="dark" className="py-2">
 			<Card.Body className="text-center">
@@ -9,6 +9,4 @@ const Loading = () => {
 			</Card.Body>
 		</Card>
 	);
-};
-
-export default Loading;
+}

@@ -3,14 +3,16 @@
 import { useState, useMemo, Fragment } from 'react';
 import { Row, Col, Table, Pagination, Form, ButtonGroup, ToggleButton, Button, Spinner } from 'react-bootstrap';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { getUserSavedTracks } from '../../api/spotify';
 import { css } from '@emotion/react';
-import Loading from './Layouts/Loading';
-import COLUMNS from './Tables/COLUMNS';
 import _ from 'lodash';
 
-import { getUserSavedTracks } from '../api/spotify';
+// Components
+import Loading from '../Layouts/Loading';
 
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+// Constants
+import { SPOTIFY_USER_LIBRARY_TABLE_COLUMNS } from '../../constants/spotify';
 
 // const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 // 	const [value, setValue] = useState(globalFilter);
@@ -56,7 +58,7 @@ export default function SpotifyUserLibraryTable() {
 
 	const data = useMemo(() => savedTracks || [], [savedTracks]);
 
-	const columns = useMemo(() => COLUMNS, []);
+	const columns = useMemo(() => SPOTIFY_USER_LIBRARY_TABLE_COLUMNS, []);
 
 	// const toggleShowDuplicates = () => {
 	// 	if (toggleDuplicateChecked) {

@@ -1,9 +1,6 @@
-import React from 'react';
-
+import { Redirect } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { BsSpotify } from 'react-icons/bs';
-
-import { Redirect } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 const handleGetAuth = () => {
@@ -14,7 +11,7 @@ const handleGetAuth = () => {
 	window.location = url;
 };
 
-const AuthorizeApp = () => {
+export default function AuthorizeApp() {
 	const queryClient = useQueryClient();
 	const user = queryClient.getQueryData(['spotifyUser']);
 
@@ -41,6 +38,4 @@ const AuthorizeApp = () => {
 			</Row>
 		</Container>
 	);
-};
-
-export default AuthorizeApp;
+}
