@@ -47,31 +47,26 @@ const base64Authorization = `${window.btoa(
  */
 
 export const getToken = async (spotifyCode) => {
-	try {
-		const response = await axios({
-			method: 'post',
-			url: 'https://accounts.spotify.com/api/token',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Authorization: 'Basic ' + base64Authorization,
-			},
-			data:
-				'grant_type=authorization_code&code=' +
-				spotifyCode +
-				'&redirect_uri=' +
-				process.env.REACT_APP_SPOTIFY_REDIRECT_URI,
-		});
-		return {
-			accessToken: response.data.access_token,
-			expiresIn: response.data.expires_in,
-			tokenType: response.data.token_type,
-			refreshToken: response.data.refresh_token,
-			scope: response.data.scope,
-		};
-	} catch (error) {
-		console.error(error);
-		return error;
-	}
+	const response = await axios({
+		method: 'post',
+		url: 'https://accounts.spotify.com/api/token',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Authorization: 'Basic ' + base64Authorization,
+		},
+		data:
+			'grant_type=authorization_code&code=' +
+			spotifyCode +
+			'&redirect_uri=' +
+			process.env.REACT_APP_SPOTIFY_REDIRECT_URI,
+	});
+	return {
+		accessToken: response.data.access_token,
+		expiresIn: response.data.expires_in,
+		tokenType: response.data.token_type,
+		refreshToken: response.data.refresh_token,
+		scope: response.data.scope,
+	};
 };
 
 /**
@@ -79,39 +74,31 @@ export const getToken = async (spotifyCode) => {
  */
 
 export const goAppAuthorization = () => {
-	try {
-		const getAuthorizationUrl = 'https://accounts.spotify.com/authorize';
-		let url = getAuthorizationUrl;
-		url += '?client_id=' + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-		url += '&response_type=code';
-		url += `&redirect_uri=${
-			process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://spotifyshortcuts.netlify.app'
-		}/callback/`;
-		url += '&scope=' + authScopes.join(' ');
-		window.location.href = url;
-	} catch (error) {
-		console.error(error);
-	}
+	const getAuthorizationUrl = 'https://accounts.spotify.com/authorize';
+	let url = getAuthorizationUrl;
+	url += '?client_id=' + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+	url += '&response_type=code';
+	url += `&redirect_uri=${
+		process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://spotifyshortcuts.netlify.app'
+	}/callback/`;
+	url += '&scope=' + authScopes.join(' ');
+	window.location.href = url;
 };
 
 /**
  * Gets a new token from the Spotify API
  */
 
-export const getNewToken = (code) => {
-	try {
-		return axios({
-			method: 'post',
-			url: 'https://accounts.spotify.com/api/token',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Authorization: 'Basic ' + base64Authorization,
-			},
-			data: 'grant_type=refresh_token&refresh_token=' + code,
-		});
-	} catch (error) {
-		console.error(error);
-	}
+export const getNewToken = async (code) => {
+	return await axios({
+		method: 'post',
+		url: 'https://accounts.spotify.com/api/token',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Authorization: 'Basic ' + base64Authorization,
+		},
+		data: 'grant_type=refresh_token&refresh_token=' + code,
+	});
 };
 
 /**
@@ -120,20 +107,15 @@ export const getNewToken = (code) => {
  */
 
 export const getUserProfile = async (token) => {
-	try {
-		const response = await axios({
-			method: 'get',
-			url: 'https://api.spotify.com/v1/me',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + token,
-			},
-		});
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		return error;
-	}
+	const response = await axios({
+		method: 'get',
+		url: 'https://api.spotify.com/v1/me',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: 'Bearer ' + token,
+		},
+	});
+	return response.data;
 };
 
 /**
@@ -145,29 +127,23 @@ export const getUserProfile = async (token) => {
  */
 
 export const getUserSavedTracks = async (token, limit = 50, market = null, offset = null) => {
-	console.log("Getting user's saved tracks");
-	try {
-		const savedTracks = [];
-		let total = 0;
-		let nextUrl = null;
-		do {
-			const response = await axios({
-				method: 'get',
-				url: 'https://api.spotify.com/v1/me/tracks?limit=' + limit + '&offset=' + offset + '&market=' + market,
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + token,
-				},
-			});
-			savedTracks.push(...response.data.items);
-			nextUrl = response.data.next;
-			total = response.data.total;
-		} while (nextUrl);
-		return { savedTracks, total };
-	} catch (error) {
-		console.error(error);
-		return error;
-	}
+	const savedTracks = [];
+	let total = 0;
+	let nextUrl = null;
+	do {
+		const response = await axios({
+			method: 'get',
+			url: 'https://api.spotify.com/v1/me/tracks?limit=' + limit + '&offset=' + offset + '&market=' + market,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			},
+		});
+		savedTracks.push(...response.data.items);
+		nextUrl = response.data.next;
+		total = response.data.total;
+	} while (nextUrl);
+	return { savedTracks, total };
 };
 
 /**
@@ -177,27 +153,23 @@ export const getUserSavedTracks = async (token, limit = 50, market = null, offse
  */
 
 export const deleteTracks = async (tracks, limit = 50) => {
-	try {
-		const trackIds = tracks.map((track) => track.track.id);
-		const trackIdsChunks = [];
-		for (let i = 0; i < trackIds.length; i += limit) {
-			trackIdsChunks.push(trackIds.slice(i, i + limit));
-		}
-		for (let i = 0; i < trackIdsChunks.length; i++) {
-			await axios({
-				method: 'delete',
-				url: 'https://api.spotify.com/v1/me/tracks',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + base64Authorization,
-				},
-				data: {
-					ids: trackIdsChunks[i],
-				},
-			});
-		}
-	} catch (error) {
-		console.error(error);
+	const trackIds = tracks.map((track) => track.track.id);
+	const trackIdsChunks = [];
+	for (let i = 0; i < trackIds.length; i += limit) {
+		trackIdsChunks.push(trackIds.slice(i, i + limit));
+	}
+	for (let i = 0; i < trackIdsChunks.length; i++) {
+		await axios({
+			method: 'delete',
+			url: 'https://api.spotify.com/v1/me/tracks',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + base64Authorization,
+			},
+			data: {
+				ids: trackIdsChunks[i],
+			},
+		});
 	}
 };
 

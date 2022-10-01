@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const Header = () => {
 	const queryClient = useQueryClient();
-	const user = queryClient.getQueryData(['user']);
+	const spotifyUser = queryClient.getQueryData(['spotifyUser']);
 
 	return (
 		<Fragment>
@@ -18,11 +18,11 @@ const Header = () => {
 					</Link>
 				</Container>
 			</Navbar>
-			{user && (
+			{spotifyUser && (
 				<div className="bg-primary py-2">
 					<Container>
 						<p className="text-dark text-end m-0">
-							Logged in as: <strong>{user.display_name}</strong>
+							Logged in as: <strong>{spotifyUser.display_name}</strong>
 							<Link to="/settings" className="text-dark">
 								<BsFillGearFill className="icon" />
 							</Link>

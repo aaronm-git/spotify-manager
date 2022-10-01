@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useURLQuery } from '../utils';
 import { getToken, getUserProfile } from '../api/spotify';
@@ -15,35 +15,31 @@ const Callback = () => {
 	const spotifyCode = search.get('code');
 	const { setAlert } = useContext(AlertContext);
 
-	const tokenQuery = useQuery(['accessToken'], () => getToken(spotifyCode), {
+	const authQuery = useQuery(['authorization'], () => getToken(spotifyCode), {
 		staleTime: Infinity,
 		enabled: !!spotifyCode,
-		onError: (error) => {
-			setAlert('ERROR', error.message);
-		},
+		onError: (error) => setAlert('ERROR', error.message),
 	});
 
-	console.log(tokenQuery.data);
-
-	const userQuery = useQuery(['user'], () => getUserProfile(tokenQuery?.data?.accessToken), {
-		enabled: !!tokenQuery?.data?.accessToken,
+	const userQuery = useQuery(['spotifyUser'], () => getUserProfile(authQuery?.data?.accessToken), {
+		enabled: !!authQuery?.data?.accessToken,
 		staleTime: 1000 * 60 * 5,
-		onError: (error) => {
-			setAlert('ERROR', error.message);
-		},
+		onError: (error) => setAlert('ERROR', error.message),
 	});
 
-	console.log(userQuery.data);
+	useEffect(() => {
+		if (authQuery.isSuccess && userQuery.isSuccess) setAlert('SUCCESS', 'Successfully logged in');
+	}, [authQuery.isSuccess, userQuery.isSuccess, setAlert]);
 
-	if (tokenQuery.isError) {
+	if (authQuery.isError || userQuery.isError) {
 		return <Redirect to="/" />;
 	}
 
-	if (tokenQuery.isLoading) {
+	if (authQuery.isLoading || userQuery.isLoading) {
 		return <Loading />;
 	}
 
-	return <Redirect to="/" />;
+	return <Redirect to="/dashboard" />;
 };
 
 export default Callback;
