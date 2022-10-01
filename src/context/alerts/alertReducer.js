@@ -1,6 +1,6 @@
 import { FaInfoCircle, FaExclamationTriangle, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
-const alertReducer = (state, action) => {
+export default function alertReducer(state, action) {
 	switch (action.type) {
 		case 'SUCCESS':
 			return {
@@ -43,6 +43,4 @@ const alertReducer = (state, action) => {
 		default:
 			return state;
 	}
-};
-
-export default alertReducer;
+}

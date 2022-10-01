@@ -17,7 +17,7 @@ import AppAlert from './components/Layouts/AppAlert';
 import Header from './components/Layouts/Header';
 
 // Contexts
-import AlertContextProvider from './context/alerts/state';
+import AlertContextProvider from './context/alerts/AlertState';
 
 const queryClient = new QueryClient();
 

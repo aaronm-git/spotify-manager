@@ -2,12 +2,11 @@
 import { useContext, useEffect } from 'react';
 import { Alert } from 'react-bootstrap';
 import { css } from '@emotion/react';
-import AlertContext from '../../context/alerts/context';
+import AlertContext from '../../context/alerts/AlertContext';
 
-const AppAlert = () => {
+export default function AppAlert() {
 	const alertContext = useContext(AlertContext);
 	const { state: alert, setAlert } = alertContext;
-
 	useEffect(() => {
 		if (alert.show) {
 			setTimeout(() => {
@@ -24,7 +23,7 @@ const AppAlert = () => {
 			</Alert>
 		</div>
 	);
-};
+}
 
 const alertStyle = css`
 	position: absolute;
@@ -38,5 +37,3 @@ const alertStyle = css`
 		margin-right: 0.5rem;
 	}
 `;
-
-export default AppAlert;

@@ -1,11 +1,12 @@
 import { useReducer } from 'react';
-import alertReducer from './reducer';
-import AlertContext from './context';
+import AlertContext from './AlertContext';
+import alertReducer from './alertReducer';
 
-const AlertContextProvider = (props) => {
+export default function AlertContextProvider(props) {
 	const [state, dispatch] = useReducer(alertReducer, {
 		type: null,
 		icon: null,
+		show: false,
 		message: '',
 	});
 
@@ -17,6 +18,4 @@ const AlertContextProvider = (props) => {
 	};
 
 	return <AlertContext.Provider value={{ state, setAlert }}>{props.children}</AlertContext.Provider>;
-};
-
-export default AlertContextProvider;
+}
