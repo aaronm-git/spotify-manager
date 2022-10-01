@@ -19,7 +19,7 @@ const AppAlert = () => {
 
 	return (
 		<div id="app-alert" css={alertStyle}>
-			<Alert variant={alert.variant} show={!alert.show}>
+			<Alert variant={alert.variant} show={alert.show}>
 				{alert.icon} {alert.message}
 			</Alert>
 		</div>

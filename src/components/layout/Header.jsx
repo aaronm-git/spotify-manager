@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 const Header = () => {
-	const user = useQueryClient(['user']);
+	const queryClient = useQueryClient();
+	const user = queryClient.getQueryData(['user']);
 
 	return (
 		<Fragment>
