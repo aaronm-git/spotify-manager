@@ -8,14 +8,14 @@ export default function AppAlert() {
 	const alertContext = useContext(AlertContext);
 	const { state: alert, setAlert } = alertContext;
 
-	console.log('Alert: ', alert);
-
 	useEffect(() => {
-		setTimeout(() => {
-			setAlert('CLEAR');
-		}, 5000);
+		if (alert.show) {
+			setTimeout(() => {
+				setAlert('CLEAR');
+			}, 5000);
+		}
 		// eslint-disable-next-line
-	}, []);
+	}, [alert.show]);
 
 	return (
 		<div id="app-alert" css={alertStyle}>

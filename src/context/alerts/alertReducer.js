@@ -12,7 +12,7 @@ export default function alertReducer(state, action) {
 
 		case 'ERROR':
 			return {
-				variant: 'error',
+				variant: 'danger',
 				icon: <FaTimesCircle />,
 				message: action.payload,
 				show: true,
