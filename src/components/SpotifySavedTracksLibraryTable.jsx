@@ -1,71 +1,133 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState, useContext, useEffect, useMemo, Fragment } from 'react';
-import { Row, Col, Table, Pagination, Form, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { useState, useMemo, Fragment } from 'react';
+import { Row, Col, Table, Pagination, Form, ButtonGroup, ToggleButton, Button, Spinner } from 'react-bootstrap';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table';
 import { css } from '@emotion/react';
-import SpotifyContext from '../context/spotify/spotifyContext';
 import Loading from './layout/Loading';
 import { COLUMNS } from './react-table/spotifyColumns';
+import _ from 'lodash';
 
-import { useQuery } from '@tanstack/react-query';
+import { getUserSavedTracks } from '../api/spotify';
 
-const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-	const [value, setValue] = useState(globalFilter);
-	const onChange = useAsyncDebounce((value) => {
-		setGlobalFilter(value || undefined);
-	}, 500);
+import { useQuery, QueryClient, useMutation } from '@tanstack/react-query';
 
-	return (
-		<Row>
-			<Col lg="3">
-				<Form.Control
-					value={value || ''}
-					type="text"
-					placeholder="Search..."
-					className="my-2"
-					onChange={(e) => {
-						setValue(e.target.value);
-						onChange(e.target.value);
-					}}
-				/>
-			</Col>
-		</Row>
-	);
-};
+// const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+// 	const [value, setValue] = useState(globalFilter);
+// 	const onChange = useAsyncDebounce((value) => {
+// 		setGlobalFilter(value || undefined);
+// 	}, 500);
+
+// 	return (
+// 		<Row>
+// 			<Col lg="3">
+// 				<Form.Control
+// 					value={value || ''}
+// 					type="text"
+// 					placeholder="Search..."
+// 					className="my-2"
+// 					onChange={(e) => {
+// 						setValue(e.target.value);
+// 						onChange(e.target.value);
+// 					}}
+// 				/>
+// 			</Col>
+// 		</Row>
+// 	);
+// };
 
 const TrackLibrary = () => {
-	const spotifyContext = useContext(SpotifyContext);
-	const { getUserSavedTracks, spotifyLibrary, setSpotifyLibrary } = spotifyContext;
-	const [checked, setChecked] = useState(false);
-
+	// const [toggleDuplicateChecked, setToggleDuplicateChecked] = useState(false);
+	// const [savedTracks, setSavedTracks] = useState([]);
 	// Queries
-	const { data: useQueryData, isLoading, isError, error } = useQuery(['spotify-savedTracks'], getUserSavedTracks);
+	const {
+		data: useQueryData,
+		isLoading,
+		isError,
+		error,
+	} = useQuery(['spotify-savedTracks'], getUserSavedTracks, {
+		staleTime: 1000 /* Milliseconds */ * 60 /* Seconds */ * 60 /* Minutes */ * 1 /* Hours */,
+		refetchOnWindowFocus: false,
+		onError: (error) => console.log(error),
+	});
 
-	useEffect(() => {
-		setSpotifyLibrary(useQueryData);
-		// eslint-disable-next-line
-	}, [useQueryData]);
-
-	const data = useMemo(() => spotifyLibrary || [], [spotifyLibrary]);
+	const data = useMemo(() => useQueryData || [], [useQueryData]);
 
 	const columns = useMemo(() => COLUMNS, []);
 
-	const toggleShowDuplicates = () => {
-		if (checked) {
-			const duplicates = data.filter((item, index) => {
-				const exactDuplicate = data.indexOf(item) !== index;
-				const duplicateIds = data.filter((item2) => item2.trackId === item.trackId).length > 1;
-				// const duplicateName = data.filter((item2) => item2.trackName === item.trackName).length > 1;
-				// const duplicateArtist = data.filter((item2) => item2.artistId === item.artistId).length > 1;
-				// const duplicateAlbum = data.filter((item2) => item2.albumId === item.albumId).length > 1;
-				return exactDuplicate || duplicateIds;
-			});
-			setSpotifyLibrary(duplicates);
-		} else {
-			setSpotifyLibrary(useQueryData);
-		}
-	};
+	// const toggleShowDuplicates = () => {
+	// 	if (toggleDuplicateChecked) {
+	// 		const duplicates = data.filter((item, index) => {
+	// 			const exactDuplicate = data.indexOf(item) !== index;
+	// 			const duplicateIds = data.filter((item2) => item2.trackId === item.trackId).length > 1;
+	// 			// const duplicateName = data.filter((item2) => item2.trackName === item.trackName).length > 1;
+	// 			// const duplicateArtist = data.filter((item2) => item2.artistId === item.artistId).length > 1;
+	// 			// const duplicateAlbum = data.filter((item2) => item2.albumId === item.albumId).length > 1;
+	// 			return exactDuplicate || duplicateIds;
+	// 		});
+	// 		setSavedTracks(duplicates);
+	// 	} else {
+	// 		setSavedTracks(useQueryData);
+	// 	}
+	// };
+
+	// const {
+	// 	mutate: addSpotifySongs,
+	// 	isLoading: isAddSpotifySongsLoading,
+	// 	data: addSpotifySongsData,
+	// } = useMutation(addTracks, {
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries('spotify-savedTracks');
+	// 	},
+	// });
+
+	// const DeleteDuplicatesButton = () => {
+	// 	const {
+	// 		mutateAsync: deleteSpotifySongs,
+	// 		isLoading: isDeleteSpotifySongsLoading,
+	// 		isError: isDeleteSpotifySongsError,
+	// 		error: deleteSpotifySongsError,
+	// 		isSuccess: isDeleteSpotifySongsSuccess,
+	// 	} = useMutation(deleteTracks, {
+	// 		onSuccess: () => queryClient.invalidateQueries('spotify-savedTracks'),
+	// 	});
+
+	// 	const handleDelete = async () => {
+	// 		try {
+	// 			const answer = window.confirm('Delete duplicates?');
+	// 			if (answer) {
+	// 				const uniqueIds = [...new Set(data.map((item) => item.trackId))];
+	// 				const uniqueIdsChunks = _.chunk(uniqueIds, 50);
+	// 				for (const chunk of uniqueIdsChunks) {
+	// 					console.log(chunk);
+	// 					await deleteSpotifySongs(chunk);
+	// 					// if (isDeleteSpotifySongsSuccess) addSpotifySongs(chunk);
+	// 				}
+	// 				const filteredLibrary = useQueryData.filter((item, index) => {
+	// 					const duplicateIds = useQueryData.filter((item2) => item2.trackId === item.trackId).length > 1;
+	// 					return !duplicateIds;
+	// 				});
+	// 				queryClient.setQueryData(['spotify-savedTracks'], filteredLibrary);
+	// 				setSavedTracks(filteredLibrary);
+	// 				setToggleDuplicateChecked(false);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error(error);
+	// 		}
+	// 	};
+
+	// 	return (
+	// 		<Button onClick={handleDelete} disabled={isLoading} className="mx-3" variant="outline-danger">
+	// 			{isLoading ? (
+	// 				<>
+	// 					Deleting... <Spinner animation="border" size="sm" variant="light" />
+	// 				</>
+	// 			) : (
+	// 				'Delete Duplicates'
+	// 			)}
+	// 		</Button>
+	// 	);
+	// };
 
 	const {
 		getTableProps,
@@ -104,12 +166,21 @@ const TrackLibrary = () => {
 	} else
 		return (
 			<Fragment>
-				<ButtonGroup className="mb-2">
-					<ToggleButton id="toggle-check" type="checkbox" variant="outline-primary" checked={checked} value="1" onClick={() => setChecked(!checked)} onChange={() => toggleShowDuplicates()}>
+				{/* <ButtonGroup>
+					<ToggleButton
+						id="toggle-check"
+						type="checkbox"
+						variant="outline-primary"
+						checked={toggleDuplicateChecked}
+						value="1"
+						onClick={() => setToggleDuplicateChecked(!toggleDuplicateChecked)}
+						onChange={() => toggleShowDuplicates()}
+					>
 						Show Duplicates
 					</ToggleButton>
 				</ButtonGroup>
-				<GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
+				{toggleDuplicateChecked && <DeleteDuplicatesButton />} */}
+				{/* <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} /> */}
 				<Table bordered hover striped responsive variant="primary" {...getTableProps()}>
 					<thead>
 						{headerGroups.map((headerGroup) => (
@@ -137,13 +208,21 @@ const TrackLibrary = () => {
 											// Otherwise, render the cell contents
 											const { trackUri, artistUri, albumUri } = row.original; //  Get the track, artist, and album URIs from the row data
 											let uri = ''; //  Initialize the URI variable
-											if (columnHeader === 'Name') uri = trackUri; //  If the column header is "Name", then set the URI to the track URI
-											else if (columnHeader === 'Artist') uri = artistUri; //  If the column header is "Artist", then set the URI to the artist URI
+											if (columnHeader === 'Name')
+												uri = trackUri; //  If the column header is "Name", then set the URI to the track URI
+											else if (columnHeader === 'Artist')
+												uri = artistUri; //  If the column header is "Artist", then set the URI to the artist URI
 											else if (columnHeader === 'Album') uri = albumUri; //  If the column header is "Album", then set the URI to the album URI
 											return (
 												<td {...cell.getCellProps()} className="position-relative">
 													{cell.render('Cell')}
-													<a href={uri} target="_blank" rel="noreferrer" className="stretched-link" title="Open in Spotify">
+													<a
+														href={uri}
+														target="_blank"
+														rel="noreferrer"
+														className="stretched-link"
+														title="Open in Spotify"
+													>
 														<span className="visually-hidden">{uri}</span>
 													</a>
 												</td>

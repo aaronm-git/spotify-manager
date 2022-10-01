@@ -1,37 +1,42 @@
 /** @jsxImportSource @emotion/react */
-import { useContext, useEffect } from "react";
-import GlobalContext from "../../context/GlobalContext";
-import { Alert } from "react-bootstrap";
-import { css } from "@emotion/react";
+import { useContext, useEffect } from 'react';
+import { Alert } from 'react-bootstrap';
+import { css } from '@emotion/react';
+import AlertContext from '../../context/alerts/context';
 
 const AppAlert = () => {
-  const globalContext = useContext(GlobalContext);
-  const { alert, setAlert } = globalContext;
-  useEffect(() => {
-    if (alert.show === true) {
-      setInterval(() => {
-        setAlert({ ...alert, show: false });
-      }, 5000);
-    }
-  }, [alert]);
+	const alertContext = useContext(AlertContext);
+	const { state: alert, setAlert } = alertContext;
 
-  return (
-    <div css={alertStyle}>
-      <Alert variant={alert.variant} show={alert.show}>
-        {alert.icon} {alert.msg}
-      </Alert>
-    </div>
-  );
+	useEffect(() => {
+		if (alert.show) {
+			setTimeout(() => {
+				setAlert('CLEAR');
+			}, 5000);
+		}
+		// eslint-disable-next-line
+	}, [alert.show]);
+
+	return (
+		<div id="app-alert" css={alertStyle}>
+			<Alert variant={alert.variant} show={!alert.show}>
+				{alert.icon} {alert.message}
+			</Alert>
+		</div>
+	);
 };
 
 const alertStyle = css`
-  color: yellow;
-  position: absolute;
-  bottom: 0rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 800px;
+	position: absolute;
+	bottom: 1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 100%;
+	max-width: 800px;
+	svg {
+		margin-bottom: 0.25rem;
+		margin-right: 0.5rem;
+	}
 `;
 
 export default AppAlert;

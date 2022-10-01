@@ -1,7 +1,7 @@
-import React from "react";
-import AuthorizeApp from "../components/AuthorizeApp";
+import React from 'react';
+import AuthorizeApp from '../components/AuthorizeApp';
 const Home = () => {
-  return <AuthorizeApp />;
+	return <AuthorizeApp />;
 };
 
 export default Home;
