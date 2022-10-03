@@ -66,6 +66,7 @@ export const getToken = async (spotifyCode) => {
 		tokenType: response.data.token_type,
 		refreshToken: response.data.refresh_token,
 		scope: response.data.scope,
+		expiresAt: Date.now() + response.data.expires_in * 1000,
 	};
 };
 

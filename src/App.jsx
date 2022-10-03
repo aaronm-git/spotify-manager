@@ -35,7 +35,7 @@ const App = () => {
 								<Route exact path={['/', '/authorize']} component={Home} />
 								<Route exact path="/callback" component={Callback} />
 								<PrivateRoute exact path="/dashboard" component={Dashboard} />
-								<Route exact path="/settings" component={Settings} />
+								<PrivateRoute exact path="/settings" component={Settings} />
 								<Route path="*" component={NotFoundPage} />
 							</Switch>
 						</Container>

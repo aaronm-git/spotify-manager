@@ -14,13 +14,14 @@ import AlertContext from '../context/alerts/AlertContext';
 const Callback = () => {
 	const search = useURLQuery();
 	const spotifyCode = search.get('code');
-	const { setUser } = useContext(GlobalContext);
+	const { setTokenMetadata, setUser } = useContext(GlobalContext);
 	const { setAlert } = useContext(AlertContext);
 
 	const authQuery = useQuery(['authorization'], () => getToken(spotifyCode), {
 		staleTime: Infinity,
 		enabled: !!spotifyCode,
 		onError: (error) => setAlert('ERROR', error.message),
+		onSuccess: (data) => setTokenMetadata(data),
 	});
 
 	const userQuery = useQuery(['spotifyUser'], () => getUserProfile(authQuery?.data?.accessToken), {
