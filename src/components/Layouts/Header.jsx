@@ -1,12 +1,14 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Container, Navbar } from 'react-bootstrap';
 import { BsSpotify, BsFillGearFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+
+// Context
+import GlobalContext from '../../context/GlobalContext';
 
 const Header = () => {
-	const queryClient = useQueryClient();
-	const spotifyUser = queryClient.getQueryData(['spotifyUser']);
+	const globalContext = useContext(GlobalContext);
+	const { user } = globalContext;
 
 	return (
 		<Fragment>
@@ -18,11 +20,11 @@ const Header = () => {
 					</Link>
 				</Container>
 			</Navbar>
-			{spotifyUser && (
+			{user && (
 				<div className="bg-primary py-2">
 					<Container>
 						<p className="text-dark text-end m-0">
-							Logged in as: <strong>{spotifyUser.display_name}</strong>
+							Logged in as: <strong>{user.display_name}</strong>
 							<Link to="/settings" className="text-dark">
 								<BsFillGearFill className="icon" />
 							</Link>

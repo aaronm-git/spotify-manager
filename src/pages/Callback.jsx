@@ -8,11 +8,13 @@ import { Redirect } from 'react-router-dom';
 import Loading from '../components/Layouts/Loading';
 
 // Contexts
+import GlobalContext from '../context/GlobalContext';
 import AlertContext from '../context/alerts/AlertContext';
 
 const Callback = () => {
 	const search = useURLQuery();
 	const spotifyCode = search.get('code');
+	const { setUser } = useContext(GlobalContext);
 	const { setAlert } = useContext(AlertContext);
 
 	const authQuery = useQuery(['authorization'], () => getToken(spotifyCode), {
@@ -25,6 +27,7 @@ const Callback = () => {
 		enabled: !!authQuery?.data?.accessToken,
 		staleTime: 1000 * 60 * 5,
 		onError: (error) => setAlert('ERROR', error.message),
+		onSuccess: (data) => setUser(data),
 	});
 
 	useEffect(() => {
@@ -39,7 +42,7 @@ const Callback = () => {
 		return <Loading />;
 	}
 
-	return <Redirect to="/dashboard" />;
+	return <Redirect to="/" />;
 };
 
 export default Callback;

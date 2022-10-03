@@ -18,27 +18,30 @@ import Header from './components/Layouts/Header';
 
 // Contexts
 import AlertContextProvider from './context/alerts/AlertState';
+import GlobalStateProvider from './context/GlobalState';
 
 const queryClient = new QueryClient();
 
 const App = () => {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<AlertContextProvider>
-				<AppAlert />
-				<Router>
-					<Header />
-					<Container className="mt-3" fluid>
-						<Switch>
-							<Route exact path={['/', '/authorize']} component={Home} />
-							<Route exact path="/callback" component={Callback} />
-							<PrivateRoute exact path="/dashboard" component={Dashboard} />
-							<Route exact path="/settings" component={Settings} />
-							<Route path="*" component={NotFoundPage} />
-						</Switch>
-					</Container>
-				</Router>
-			</AlertContextProvider>
+			<GlobalStateProvider>
+				<AlertContextProvider>
+					<AppAlert />
+					<Router>
+						<Header />
+						<Container className="mt-3" fluid>
+							<Switch>
+								<Route exact path={['/', '/authorize']} component={Home} />
+								<Route exact path="/callback" component={Callback} />
+								<PrivateRoute exact path="/dashboard" component={Dashboard} />
+								<Route exact path="/settings" component={Settings} />
+								<Route path="*" component={NotFoundPage} />
+							</Switch>
+						</Container>
+					</Router>
+				</AlertContextProvider>
+			</GlobalStateProvider>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);

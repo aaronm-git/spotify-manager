@@ -12,12 +12,13 @@ const handleGetAuth = () => {
 };
 
 export default function AuthorizeApp() {
-	const queryClient = useQueryClient();
-	const user = queryClient.getQueryData(['spotifyUser']);
+	// const queryClient = useQueryClient();
+	// const spotifyUser = queryClient.getQueryData(['spotifyUser']);
 
-	return user ? (
-		<Redirect to="/dashboard" />
-	) : (
+	// return spotifyUser ? (
+	// 	<Redirect to="/" />
+	// ) : (
+	return (
 		<Container className="mt-5">
 			<Row>
 				<Col md={{ span: 8, offset: 2 }}>
@@ -38,4 +39,5 @@ export default function AuthorizeApp() {
 			</Row>
 		</Container>
 	);
+	// );
 }

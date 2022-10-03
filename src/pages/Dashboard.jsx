@@ -8,6 +8,7 @@ import SpotifyUserLibraryTable from '../components/Tables/SpotifyUserLibraryTabl
 const Dashboard = () => {
 	const queryClient = useQueryClient();
 	const user = queryClient.getQueryData('user');
+
 	if (!user) {
 		return <Redirect to="/" />;
 	} else {
@@ -15,7 +16,6 @@ const Dashboard = () => {
 			<Card className="bg-dark text-white mt-2 shadow-lg">
 				<Card.Body>
 					<Card.Title className="fw-light border-bottom border-primary">Dashboard</Card.Title>
-					<SpotifyUserLibraryTable />
 				</Card.Body>
 			</Card>
 		);
