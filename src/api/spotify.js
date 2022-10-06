@@ -134,7 +134,7 @@ export const getUserSavedTracks = async (token, limit = 50, market = null, offse
 	do {
 		const response = await axios({
 			method: 'get',
-			url: 'https://api.spotify.com/v1/me/tracks?limit=' + limit + '&offset=' + offset + '&market=' + market,
+			url: 'https://api.spotify.com/v1/me/tracks',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: 'Bearer ' + token,

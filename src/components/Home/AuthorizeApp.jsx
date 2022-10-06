@@ -1,7 +1,9 @@
-import { Redirect } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Redirect, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { BsSpotify } from 'react-icons/bs';
 import { useQueryClient } from '@tanstack/react-query';
+import { useAlert } from '../../hooks/alert';
 
 const handleGetAuth = () => {
 	const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
@@ -12,13 +14,20 @@ const handleGetAuth = () => {
 };
 
 export default function AuthorizeApp() {
-	// const queryClient = useQueryClient();
-	// const spotifyUser = queryClient.getQueryData(['spotifyUser']);
+	const queryClient = useQueryClient();
+	const { showAlert } = useAlert();
+	const location = useLocation();
+	const token = queryClient.getQueryData(['authorization'])?.accessToken;
 
-	// return spotifyUser ? (
-	// 	<Redirect to="/" />
-	// ) : (
-	return (
+	useEffect(() => {
+		if (location.state.alert) {
+			showAlert(location.state.alert[0], location.state.alert[1]);
+		}
+	}, [location]);
+
+	return token ? (
+		<Redirect to="/dashboard" />
+	) : (
 		<Container className="mt-5">
 			<Row>
 				<Col md={{ span: 8, offset: 2 }}>
@@ -39,5 +48,4 @@ export default function AuthorizeApp() {
 			</Row>
 		</Container>
 	);
-	// );
 }

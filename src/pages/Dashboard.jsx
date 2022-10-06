@@ -1,25 +1,56 @@
-import { Redirect } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Card } from 'react-bootstrap';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-// Components
-import SpotifyUserLibraryTable from '../components/Tables/SpotifyUserLibraryTable';
+// components
+import SpotifySavedTracksTable from '../components/Tables/SpotifySavedTracksTable';
+
+// constants
+import { SPOTIFY_USER_LIBRARY_TABLE_COLUMNS as COLUMNS } from '../constants/spotify';
+
+// apis
+import { getUserSavedTracks } from '../api/spotify';
+import Loading from '../components/Layouts/Loading';
+
+// hooks
+import { useSpotifyToken } from '../hooks/spotifyHooks';
+import { useAlert } from '../hooks/alert';
 
 const Dashboard = () => {
 	const queryClient = useQueryClient();
-	const user = queryClient.getQueryData('user');
+	const spotifyToken = useSpotifyToken();
+	const showAlert = useAlert();
 
-	if (!user) {
-		return <Redirect to="/" />;
-	} else {
-		return (
-			<Card className="bg-dark text-white mt-2 shadow-lg">
-				<Card.Body>
-					<Card.Title className="fw-light border-bottom border-primary">Dashboard</Card.Title>
-				</Card.Body>
-			</Card>
-		);
-	}
+	const { data, isLoading, isSuccess, isError } = useQuery(
+		['spotifySavedTracks'],
+		() => getUserSavedTracks(spotifyToken),
+		{
+			staleTime: 1000 * 60 * 60 * 24,
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
+		}
+	);
+
+	useEffect(() => {
+		return () => {
+			queryClient.removeQueries(['spotifySavedTracks']);
+		};
+	}, []);
+
+	return (
+		<Card className="bg-dark text-white mt-2 shadow-lg">
+			<Card.Body>
+				<Card.Title className="fw-light border-bottom border-primary">Dashboard</Card.Title>
+				{isLoading ? (
+					<Loading />
+				) : isSuccess ? (
+					<SpotifySavedTracksTable columns={COLUMNS} data={data} />
+				) : isError ? (
+					<p>error</p>
+				) : null}
+			</Card.Body>
+		</Card>
+	);
 };
 
 export default Dashboard;

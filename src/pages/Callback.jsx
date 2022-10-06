@@ -32,8 +32,9 @@ const Callback = () => {
 	});
 
 	useEffect(() => {
-		if (authQuery.isSuccess && userQuery.isSuccess) setAlert('SUCCESS', 'Successfully logged in');
-	}, [authQuery.isSuccess, userQuery.isSuccess, setAlert]);
+		if (authQuery.isSuccess && userQuery.isSuccess)
+			setAlert('SUCCESS', 'Successfully logged in as ' + userQuery.data.display_name);
+	}, [authQuery.isSuccess, userQuery.isSuccess]);
 
 	if (authQuery.isError || userQuery.isError) {
 		return <Redirect to="/" />;

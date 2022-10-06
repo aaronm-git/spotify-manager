@@ -3,18 +3,25 @@ import { Route, Redirect, useLocation } from 'react-router-dom';
 
 // Contexts
 import GlobalContext from '../../context/GlobalContext';
-import AlertContext from '../../context/alerts/AlertContext';
+
+// Hooks
+import { useAlert } from '../../hooks/alert';
 
 const PrivateRoute = (props) => {
 	const location = useLocation();
 	const globalContext = useContext(GlobalContext);
-	const alertContext = useContext(AlertContext);
 	const { tokenMetadata } = globalContext;
-	const { setAlert } = alertContext;
+	const showAlert = useAlert();
 
 	if (!tokenMetadata) {
-		setAlert('ERROR', 'You must be logged in to view this page');
-		return <Redirect to={{ pathname: '/', state: { from: location } }} />;
+		return (
+			<Redirect
+				to={{
+					pathname: '/',
+					state: { from: location, alert: ['ERROR', 'You must be logged in to view this page!'] },
+				}}
+			/>
+		);
 	} else {
 		return <Route {...props} />;
 	}
