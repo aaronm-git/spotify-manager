@@ -4,14 +4,10 @@ import { Route, Redirect, useLocation } from 'react-router-dom';
 // Contexts
 import GlobalContext from '../../context/GlobalContext';
 
-// Hooks
-import { useAlert } from '../../hooks/alert';
-
 const PrivateRoute = (props) => {
 	const location = useLocation();
 	const globalContext = useContext(GlobalContext);
 	const { tokenMetadata } = globalContext;
-	const showAlert = useAlert();
 
 	if (!tokenMetadata) {
 		return (
