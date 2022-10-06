@@ -20,7 +20,7 @@ export default function AuthorizeApp() {
 	const token = queryClient.getQueryData(['authorization'])?.accessToken;
 
 	useEffect(() => {
-		if (location.state.alert) {
+		if (location.state?.alert) {
 			showAlert(location.state.alert[0], location.state.alert[1]);
 		}
 	}, [location]);
