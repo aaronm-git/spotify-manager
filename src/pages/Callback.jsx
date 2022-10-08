@@ -5,7 +5,7 @@ import { getToken, getUserProfile } from '../api/spotify';
 import { Redirect } from 'react-router-dom';
 
 // components
-import Loading from '../components/Layouts/Loading';
+import Loading from '../components/layouts/Loading';
 
 // Contexts
 import GlobalContext from '../context/GlobalContext';

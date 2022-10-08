@@ -3,14 +3,14 @@ import { Card } from 'react-bootstrap';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 // components
-import SpotifySavedTracksTable from '../components/Tables/SpotifySavedTracksTable';
+import SpotifySavedTracksTable from '../components/tables/SpotifySavedTracksTable';
+import Loading from '../components/layouts/Loading';
 
 // constants
 import { SPOTIFY_USER_LIBRARY_TABLE_COLUMNS as COLUMNS } from '../constants/spotify';
 
 // apis
 import { getUserSavedTracks, getTestUserSavedTracks } from '../api/spotify';
-import Loading from '../components/Layouts/Loading';
 
 // hooks
 import { useSpotifyToken } from '../hooks/spotifyHooks';
@@ -37,11 +37,6 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		isError && showAlert('ERROR', 'There was an error fetching your saved tracks.');
-
-		return () => {
-			// cleanup
-			queryClient.removeQueries(['spotifySavedTracks']);
-		};
 	}, [isError]);
 
 	return (

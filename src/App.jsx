@@ -12,9 +12,9 @@ import Callback from './pages/Callback';
 import NotFoundPage from './pages/404';
 
 // Components
-import PrivateRoute from './components/App/PrivateRoute';
-import AppAlert from './components/Layouts/AppAlert';
-import Header from './components/Layouts/Header';
+import PrivateRoute from './components/app/PrivateRoute';
+import AppAlert from './components/layouts/AppAlert';
+import Header from './components/layouts/Header';
 
 // Contexts
 import AlertContextProvider from './context/alerts/AlertState';
