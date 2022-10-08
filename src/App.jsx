@@ -32,7 +32,7 @@ const App = () => {
 						<Header />
 						<Container className="mt-3" fluid>
 							<Switch>
-								<Route exact path={['/', '/authorize']} component={Home} />
+								<Route exact path={['/', '/spotify-shortcuts', '/authorize']} component={Home} />
 								<Route exact path="/callback" component={Callback} />
 								<PrivateRoute exact path="/dashboard" component={Dashboard} />
 								<PrivateRoute exact path="/settings" component={Settings} />

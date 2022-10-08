@@ -1,6 +1,6 @@
 {
 	"homepage": "https://aaronm-git.github.io/spotify-shortcuts",
-	"name": "spotify-manager",
+	"name": "spotify-shortcuts",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
