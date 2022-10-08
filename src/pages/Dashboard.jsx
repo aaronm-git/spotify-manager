@@ -9,12 +9,15 @@ import SpotifySavedTracksTable from '../components/Tables/SpotifySavedTracksTabl
 import { SPOTIFY_USER_LIBRARY_TABLE_COLUMNS as COLUMNS } from '../constants/spotify';
 
 // apis
-import { getUserSavedTracks } from '../api/spotify';
+import { getUserSavedTracks, getTestUserSavedTracks } from '../api/spotify';
 import Loading from '../components/Layouts/Loading';
 
 // hooks
 import { useSpotifyToken } from '../hooks/spotifyHooks';
 import { useAlert } from '../hooks/alert';
+
+// testing
+const testing = false;
 
 const Dashboard = () => {
 	const queryClient = useQueryClient();
@@ -23,19 +26,23 @@ const Dashboard = () => {
 
 	const { data, isLoading, isSuccess, isError } = useQuery(
 		['spotifySavedTracks'],
-		() => getUserSavedTracks(spotifyToken),
+		() => (testing ? getTestUserSavedTracks(spotifyToken) : getUserSavedTracks(spotifyToken)),
 		{
-			staleTime: 1000 * 60 * 60 * 24,
+			retry: false,
+			staleTime: Infinity,
 			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 		}
 	);
 
 	useEffect(() => {
+		isError && showAlert('ERROR', 'There was an error fetching your saved tracks.');
+
 		return () => {
+			// cleanup
 			queryClient.removeQueries(['spotifySavedTracks']);
 		};
-	}, []);
+	}, [isError]);
 
 	return (
 		<Card className="bg-dark text-white mt-2 shadow-lg">

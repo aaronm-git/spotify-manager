@@ -1,4 +1,5 @@
 import axios from 'axios';
+import testTracks from '../data/allTracks.json';
 
 const authScopes = [
 	//Images
@@ -128,24 +129,32 @@ export const getUserProfile = async (token) => {
  */
 
 export const getUserSavedTracks = async (token, limit = 50, market = null, offset = null) => {
-	const savedTracks = [];
-	let total = 0;
-	let nextUrl = null;
-	do {
-		const response = await axios({
-			method: 'get',
-			url: 'https://api.spotify.com/v1/me/tracks',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + token,
-			},
-		});
-		savedTracks.push(...response.data.items);
-		nextUrl = response.data.next;
-		total = response.data.total;
-	} while (nextUrl);
-	return { savedTracks, total };
+	try {
+		const savedTracks = [];
+		let url =
+			'https://api.spotify.com/v1/me/tracks?limit=' +
+			limit +
+			(market ? '&market=' + market : '') +
+			(offset ? '&offset=' + offset : '');
+		do {
+			const response = await axios({
+				method: 'get',
+				url,
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + token,
+				},
+			});
+			savedTracks.push(...response.data.items);
+			url = response.data.next;
+		} while (!!url);
+		return processTracks(savedTracks);
+	} catch (error) {
+		throw new Error(error);
+	}
 };
+
+export const getTestUserSavedTracks = async () => processTracks(testTracks);
 
 /**
  * Deletes tracks from the user's saved tracks
@@ -174,5 +183,17 @@ export const deleteTracks = async (tracks, limit = 50) => {
 	}
 };
 
-// Language: javascript
-// Path: src/api/spotify.js
+const processTracks = (tracks) => {
+	return tracks.map((data) => ({
+		trackId: data.linked_from ? data.linked_from.id : data.track.id,
+		artistId: data.track.artists[0].id,
+		albumId: data.track.album.id,
+		trackName: data.track.name,
+		albumName: data.track.album.name,
+		artistName: data.track.artists[0].name,
+		trackUri: data.track.uri,
+		artistUri: data.track.artists[0].uri,
+		albumUri: data.track.album.uri,
+		trackData: data.track,
+	}));
+};
