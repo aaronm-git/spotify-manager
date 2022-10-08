@@ -75,14 +75,12 @@ export const getToken = async (spotifyCode) => {
  * Navigate to Spotify to authorize the user
  */
 
-export const goAppAuthorization = () => {
+export const getAppAuthorization = () => {
 	const getAuthorizationUrl = 'https://accounts.spotify.com/authorize';
 	let url = getAuthorizationUrl;
 	url += '?client_id=' + process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 	url += '&response_type=code';
-	url += `&redirect_uri=${
-		process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://spotifyshortcuts.netlify.app'
-	}/callback/`;
+	url += `&redirect_uri=${process.env.REACT_APP_SPOTIFY_REDIRECT_URI}`;
 	url += '&scope=' + authScopes.join(' ');
 	window.location.href = url;
 };

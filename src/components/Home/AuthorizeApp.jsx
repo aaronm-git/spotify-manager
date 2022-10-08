@@ -5,14 +5,8 @@ import { BsSpotify } from 'react-icons/bs';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAlert } from '../../hooks/alert';
 
-const handleGetAuth = () => {
-	const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
-	console.log(redirectUri);
-	const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-	const scopes = process.env.REACT_APP_SPOTIFY_SCOPES;
-	const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scopes}`;
-	window.location = url;
-};
+// api
+import { getAppAuthorization } from '../../api/spotify';
 
 export default function AuthorizeApp() {
 	const queryClient = useQueryClient();
@@ -36,7 +30,7 @@ export default function AuthorizeApp() {
 						<Card.Body>
 							<Card.Title className="border-bottom border-primary">Authorization Required</Card.Title>
 							<div className="text-center">
-								<Button className="btn-lg my-3" onClick={handleGetAuth}>
+								<Button className="btn-lg my-3" onClick={getAppAuthorization}>
 									Authorize App <BsSpotify className="icon" />
 								</Button>
 								<small className="text-muted d-block">
