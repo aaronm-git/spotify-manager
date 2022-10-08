@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Card } from 'react-bootstrap';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 // components
 import SpotifySavedTracksTable from '../components/tables/SpotifySavedTracksTable';
@@ -20,7 +20,6 @@ import { useAlert } from '../hooks/alert';
 const testing = false;
 
 const Dashboard = () => {
-	const queryClient = useQueryClient();
 	const spotifyToken = useSpotifyToken();
 	const showAlert = useAlert();
 
