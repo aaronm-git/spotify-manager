@@ -28,7 +28,7 @@ const App = () => {
 			<GlobalStateProvider>
 				<AlertContextProvider>
 					<AppAlert />
-					<Router>
+					<Router basename={process.env.REACT_APP_BASE_URL}>
 						<Header />
 						<Container className="mt-3" fluid>
 							<Switch>
