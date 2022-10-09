@@ -1,26 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { BsSpotify } from 'react-icons/bs';
-import { useQueryClient } from '@tanstack/react-query';
 import { useAlert } from '../../hooks/alert';
 
+// contexts
+import GlobalContext from '../../context/GlobalContext';
 // api
 import { getAppAuthorization } from '../../api/spotify';
 
 export default function AuthorizeApp() {
-	const queryClient = useQueryClient();
+	const accessToken = useContext(GlobalContext)?.tokenMetadata?.accessToken;
 	const { showAlert } = useAlert();
 	const location = useLocation();
-	const token = queryClient.getQueryData(['authorization'])?.accessToken;
 
 	useEffect(() => {
-		if (location.state?.alert) {
-			showAlert(location.state.alert[0], location.state.alert[1]);
-		}
+		if (location.state?.alert) showAlert(location.state.alert[0], location.state.alert[1]);
 	}, [location]);
 
-	return token ? (
+	return accessToken ? (
 		<Redirect to="/dashboard" />
 	) : (
 		<Container className="mt-5">

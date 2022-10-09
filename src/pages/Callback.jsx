@@ -11,7 +11,7 @@ import Loading from '../components/layouts/Loading';
 import GlobalContext from '../context/GlobalContext';
 import AlertContext from '../context/alerts/AlertContext';
 
-const Callback = () => {
+export default function Callback() {
 	const search = useURLQuery();
 	const spotifyCode = search.get('code');
 	const { setTokenMetadata, setUser } = useContext(GlobalContext);
@@ -36,15 +36,11 @@ const Callback = () => {
 			setAlert('SUCCESS', 'Successfully logged in as ' + userQuery.data.display_name);
 	}, [authQuery.isSuccess, userQuery.isSuccess]);
 
-	if (authQuery.isError || userQuery.isError) {
-		return <Redirect to="/" />;
-	}
+	if (!spotifyCode) return <Redirect to="/" />;
 
-	if (authQuery.isLoading || userQuery.isLoading) {
-		return <Loading />;
-	}
+	if (authQuery.isError || userQuery.isError) return <Redirect to="/" />;
 
-	return <Redirect to="/" />;
-};
+	if (authQuery.isLoading || userQuery.isLoading) return <Loading />;
 
-export default Callback;
+	return <Redirect to="/dashboard" />;
+}
