@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/spotify-shortcuts/static/css/main.118e1f4c.css",
-    "main.js": "/spotify-shortcuts/static/js/main.a8c088b8.js",
+    "main.js": "/spotify-shortcuts/static/js/main.f619571b.js",
     "index.html": "/spotify-shortcuts/index.html",
     "main.118e1f4c.css.map": "/spotify-shortcuts/static/css/main.118e1f4c.css.map",
-    "main.a8c088b8.js.map": "/spotify-shortcuts/static/js/main.a8c088b8.js.map"
+    "main.f619571b.js.map": "/spotify-shortcuts/static/js/main.f619571b.js.map"
   },
   "entrypoints": [
     "static/css/main.118e1f4c.css",
-    "static/js/main.a8c088b8.js"
+    "static/js/main.f619571b.js"
   ]
 }
