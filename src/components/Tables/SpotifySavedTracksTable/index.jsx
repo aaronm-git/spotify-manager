@@ -1,11 +1,10 @@
 /** @jsxImportSource @emotion/react */
-
-import { useMemo, Fragment } from 'react';
-import { Table, Pagination } from 'react-bootstrap';
+import { useMemo, useContext, Fragment } from 'react';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useFilters } from 'react-table';
 import { css } from '@emotion/react';
 
-// Components
+// components
+import { Table, Pagination } from 'react-bootstrap';
 import GlobalFilter from '../GlobalFilter';
 
 export default function SpotifySavedTracksTable(props) {

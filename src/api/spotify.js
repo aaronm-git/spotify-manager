@@ -145,6 +145,7 @@ export const getUserSavedTracks = async (token, limit = 50, market = null, offse
 			});
 			savedTracks.push(...response.data.items);
 			url = response.data.next;
+			// url = null;
 		} while (!!url);
 		return processTracks(savedTracks);
 	} catch (error) {
