@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro';
 
 const toggleShowDuplicates = (data, setData) => {
-	console.log(data[0]);
 	const duplicates = data.filter((item, index) => {
 		const exactDuplicate = data.indexOf(item) !== index;
 		const duplicateIds = data.filter((item2) => item2.trackId === item.trackId).length > 1;
