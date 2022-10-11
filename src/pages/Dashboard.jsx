@@ -1,57 +1,12 @@
-import { useEffect } from 'react';
-import { Card } from 'react-bootstrap';
-import { useQuery } from '@tanstack/react-query';
-
+import React from 'react';
 // components
-import SpotifySavedTracksTable from '../components/tables/SpotifySavedTracksTable';
-import Loading from '../components/layouts/Loading';
-
-// constants
-import { SPOTIFY_USER_LIBRARY_TABLE_COLUMNS as COLUMNS } from '../constants/spotify';
-
-// apis
-import { getUserSavedTracks, getTestUserSavedTracks } from '../api/spotify';
-
-// hooks
-import { useSpotifyToken } from '../hooks/spotifyHooks';
-import { useAlert } from '../hooks/alert';
-
-// testing
-const testing = false;
-
-const Dashboard = () => {
-	const spotifyToken = useSpotifyToken();
-	const showAlert = useAlert();
-
-	const { data, isLoading, isSuccess, isError } = useQuery(
-		['spotifySavedTracks'],
-		() => (testing ? getTestUserSavedTracks(spotifyToken) : getUserSavedTracks(spotifyToken)),
-		{
-			retry: false,
-			staleTime: Infinity,
-			refetchOnMount: false,
-			refetchOnWindowFocus: false,
-		}
-	);
-
-	useEffect(() => {
-		isError && showAlert('ERROR', 'There was an error fetching your saved tracks.');
-	}, [isError]);
-
+import DataLayer from '../components/dashboard/DataLayer';
+// providers
+import TableDataProvider from '../context/dashboard/TableDataState';
+export default function Dashboard() {
 	return (
-		<Card className="bg-dark text-white mt-2 shadow-lg">
-			<Card.Body>
-				<Card.Title className="fw-light border-bottom border-primary">Dashboard</Card.Title>
-				{isLoading ? (
-					<Loading />
-				) : isSuccess ? (
-					<SpotifySavedTracksTable columns={COLUMNS} data={data} />
-				) : isError ? (
-					<p>error</p>
-				) : null}
-			</Card.Body>
-		</Card>
+		<TableDataProvider>
+			<DataLayer />
+		</TableDataProvider>
 	);
-};
-
-export default Dashboard;
+}
