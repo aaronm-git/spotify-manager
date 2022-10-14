@@ -134,19 +134,37 @@ export const getUserSavedTracks = async (token, limit = 50, market = null, offse
 			limit +
 			(market ? '&market=' + market : '') +
 			(offset ? '&offset=' + offset : '');
-		do {
-			const response = await axios({
-				method: 'get',
-				url,
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + token,
-				},
+
+		const response = await axios({
+			method: 'get',
+			url,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			},
+		});
+		savedTracks.push(...response.data.items);
+		const total = response.data.total;
+		if (response.data.next) {
+			const promisesArray = [];
+			for (let i = response.data.items.length; i < total; i += 50) {
+				const promiseUrl = response.data.next.replace(/offset=\d+/, 'offset=' + i);
+				promisesArray.push(
+					axios({
+						method: 'get',
+						url: promiseUrl,
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + token,
+						},
+					})
+				);
+			}
+			const responses = await Promise.all(promisesArray);
+			responses.forEach((response) => {
+				savedTracks.push(...response.data.items);
 			});
-			savedTracks.push(...response.data.items);
-			url = response.data.next;
-			// url = null;
-		} while (!!url);
+		}
 		return processTracks(savedTracks);
 	} catch (error) {
 		throw new Error(error);
