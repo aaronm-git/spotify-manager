@@ -10,10 +10,10 @@ import GlobalContext from '../../context/GlobalContext';
 export default function LogoutButton() {
 	const queryClient = useQueryClient();
 	const history = useHistory();
-	const { setTokenMetadata } = React.useContext(GlobalContext);
+	const { resetGlobalState } = React.useContext(GlobalContext);
 	const HandleLogOut = () => {
 		queryClient.clear();
-		setTokenMetadata(null);
+		resetGlobalState();
 		history.push('/authorize');
 	};
 
