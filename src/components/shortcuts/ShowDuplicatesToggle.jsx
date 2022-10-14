@@ -47,7 +47,7 @@ export default function ShowDuplicatesToggle({ data, setData }) {
 				<FontAwesomeIcon icon={solid('clone')} />
 				<span className="mx-2">Show Duplicates</span>
 			</ToggleButton>
-			{checked && <DeleteDuplicates data={data} setData={setData} setChecked={setChecked} />}
+			{checked && <DeleteDuplicates data={data} setChecked={setChecked} />}
 		</Fragment>
 	);
 }

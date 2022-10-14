@@ -7,31 +7,33 @@ import { BsFileMinusFill } from 'react-icons/bs';
 import { deleteTracks } from '../../api/spotify';
 // contexts
 import { useSpotifyToken } from '../../hooks/spotifyHooks';
-export default function DeleteDuplicates({ data, setData, setChecked }) {
+// hooks
+import { useAlert } from '../../hooks/alert';
+
+export default function DeleteDuplicates({ data, setChecked }) {
 	const spotifyToken = useSpotifyToken();
 	const queryClient = useQueryClient();
-	const cachedLibrary = queryClient.getQueryData(['spotifySavedTracks']);
+	const { showAlert } = useAlert();
 
 	const { mutate, isLoading } = useMutation(
 		() => {
-			let duplicates = [...data].sort((a, b) => a.trackName.localeCompare(b.trackName));
-			const uniqueTracks = [];
-			duplicates = duplicates.filter((track) => {
-				if (!uniqueTracks.includes(track.trackId)) {
-					uniqueTracks.push(track.trackId);
-					return true;
-				} else {
-					return false;
-				}
-			});
-			return deleteTracks(spotifyToken, duplicates);
+			const sortedTracks = [...data].sort((a, b) => a.trackName.localeCompare(b.trackName));
+			const duplicateTracks = sortedTracks.filter(
+				(track, index, arr) =>
+					track.trackName === arr[index + 1]?.trackName && track.artistName === arr[index + 1]?.artistName
+			);
+			console.log(duplicateTracks.reduce((acc, cur) => acc + cur.trackName + ',', ''));
+			return deleteTracks(spotifyToken, duplicateTracks);
 		},
 		{
-			onSuccess: (data) => {
-				const newLibrary = cachedLibrary.filter((track) => !data.removedTrackIds.includes(track.trackId));
-				queryClient.setQueryData(['spotifySavedTracks'], newLibrary);
-				setData(cachedLibrary);
+			onSuccess: () => {
+				queryClient.invalidateQueries(['spotifySavedTracks'], { exact: true });
+				showAlert('SUCCESS', 'Duplicates have been deleted from your library.');
 				setChecked(false);
+			},
+			onError: (error) => {
+				showAlert('ERROR', error.message);
+				console.log(error);
 			},
 		}
 	);
@@ -47,7 +49,7 @@ export default function DeleteDuplicates({ data, setData, setChecked }) {
 				<Spinner animation="border" size="sm" variant="light" />
 			) : (
 				<>
-					<BsFileMinusFill className="icon" />
+					<BsFileMinusFill />
 					<span className="mx-2">Delete Duplicates</span>
 				</>
 			)}

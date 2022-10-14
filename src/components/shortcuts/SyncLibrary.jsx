@@ -4,7 +4,6 @@ import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro';
-import { useEffect } from 'react';
 
 export default function SyncLibrary() {
 	const queryClient = useQueryClient();

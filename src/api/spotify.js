@@ -180,36 +180,35 @@ export const getTestUserSavedTracks = async () => processTracks(testTracks);
  * @param { Number } limit  - The limit of tracks to be deleted at a time
  */
 
-export const deleteTracks = async (token, tracks, limit = 50) => {
+export const deleteTracks = async (token, tracks) => {
 	try {
 		const trackIds = tracks.map((track) => track.trackId);
 		const trackIdsChunks = [];
-		for (let i = 0; i < trackIds.length; i += limit) {
-			trackIdsChunks.push(trackIds.slice(i, i + limit));
+		if (trackIds.length) {
+			for (let i = 0; i < trackIds.length; i += 50) {
+				trackIdsChunks.push(trackIds.slice(i, i + 50));
+			}
+			const promises = [];
+			for (let i = 0; i < trackIdsChunks.length; i++) {
+				promises.push(
+					axios({
+						method: 'delete',
+						url: 'https://api.spotify.com/v1/me/tracks',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + token,
+						},
+						data: {
+							ids: trackIdsChunks[i],
+						},
+					})
+				);
+			}
+			await Promise.all(promises);
+			return true;
+		} else {
+			return null;
 		}
-
-		await (function () {
-			return new Promise((resolve, reject) => {
-				setTimeout(() => {
-					resolve();
-				}, 2000);
-			});
-		})();
-
-		// for (let i = 0; i < trackIdsChunks.length; i++) {
-		// 	await axios({
-		// 		method: 'delete',
-		// 		url: 'https://api.spotify.com/v1/me/tracks',
-		// 		headers: {
-		// 			'Content-Type': 'application/json',
-		// 			Authorization: 'Bearer ' + token,
-		// 		},
-		// 		data: {
-		// 			ids: trackIdsChunks[i],
-		// 		},
-		// 	});
-		// }
-		return { success: true, removedTrackIds: trackIds };
 	} catch (error) {
 		throw new Error(error);
 	}
