@@ -18,10 +18,12 @@ export default function DeleteDuplicates({ data, setChecked }) {
 	const { mutate, isLoading } = useMutation(
 		() => {
 			const sortedTracks = [...data].sort((a, b) => a.trackName.localeCompare(b.trackName));
-			const duplicateTracks = sortedTracks.filter(
-				(track, index, arr) =>
-					track.trackName === arr[index + 1]?.trackName && track.artistName === arr[index + 1]?.artistName
-			);
+			const duplicateTracks = sortedTracks.filter((track, index, arr) => {
+				const duplicateByTrackId = arr.filter((track2) => track2.trackId === track.trackId).length > 1;
+				const duplicateByTrackNameAndArtistName =
+					track.trackName === arr[index + 1]?.trackName && track.artistName === arr[index + 1]?.artistName;
+				return duplicateByTrackId || duplicateByTrackNameAndArtistName;
+			});
 			console.log(duplicateTracks.reduce((acc, cur) => acc + cur.trackName + ',', ''));
 			return deleteTracks(spotifyToken, duplicateTracks);
 		},
