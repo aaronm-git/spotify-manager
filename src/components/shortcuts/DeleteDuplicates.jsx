@@ -24,7 +24,6 @@ export default function DeleteDuplicates({ data, setChecked }) {
 					track.trackName === arr[index + 1]?.trackName && track.artistName === arr[index + 1]?.artistName;
 				return duplicateByTrackId || duplicateByTrackNameAndArtistName;
 			});
-			console.log(duplicateTracks.reduce((acc, cur) => acc + cur.trackName + ',', ''));
 			return deleteTracks(spotifyToken, duplicateTracks);
 		},
 		{
