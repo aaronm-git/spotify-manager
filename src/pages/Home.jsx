@@ -1,6 +1,13 @@
 import React from 'react';
+// components
 import AuthorizeApp from '../components/home/AuthorizeApp';
+import DummyCredentials from '../components/home/DummyCredentials';
 
-const Home = () => <AuthorizeApp />;
-
-export default Home;
+export default function Home() {
+	return (
+		<>
+			<AuthorizeApp />
+			<DummyCredentials />
+		</>
+	);
+}
