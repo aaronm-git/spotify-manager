@@ -157,28 +157,43 @@ export const getTestUserSavedTracks = async () => processTracks(testTracks);
 
 /**
  * Deletes tracks from the user's saved tracks
+ * @param { String } token  - The token to be used for authentication
  * @param { Array } tracks  - The tracks to be deleted
  * @param { Number } limit  - The limit of tracks to be deleted at a time
  */
 
-export const deleteTracks = async (tracks, limit = 50) => {
-	const trackIds = tracks.map((track) => track.track.id);
-	const trackIdsChunks = [];
-	for (let i = 0; i < trackIds.length; i += limit) {
-		trackIdsChunks.push(trackIds.slice(i, i + limit));
-	}
-	for (let i = 0; i < trackIdsChunks.length; i++) {
-		await axios({
-			method: 'delete',
-			url: 'https://api.spotify.com/v1/me/tracks',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + base64Authorization,
-			},
-			data: {
-				ids: trackIdsChunks[i],
-			},
-		});
+export const deleteTracks = async (token, tracks, limit = 50) => {
+	try {
+		const trackIds = tracks.map((track) => track.trackId);
+		const trackIdsChunks = [];
+		for (let i = 0; i < trackIds.length; i += limit) {
+			trackIdsChunks.push(trackIds.slice(i, i + limit));
+		}
+
+		await (function () {
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					resolve();
+				}, 2000);
+			});
+		})();
+
+		// for (let i = 0; i < trackIdsChunks.length; i++) {
+		// 	await axios({
+		// 		method: 'delete',
+		// 		url: 'https://api.spotify.com/v1/me/tracks',
+		// 		headers: {
+		// 			'Content-Type': 'application/json',
+		// 			Authorization: 'Bearer ' + token,
+		// 		},
+		// 		data: {
+		// 			ids: trackIdsChunks[i],
+		// 		},
+		// 	});
+		// }
+		return { success: true, removedTrackIds: trackIds };
+	} catch (error) {
+		throw new Error(error);
 	}
 };
 
