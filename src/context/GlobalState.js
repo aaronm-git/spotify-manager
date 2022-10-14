@@ -12,6 +12,10 @@ export default function GlobalStateProvider({ children }) {
 				setUser,
 				tokenMetadata,
 				setTokenMetadata,
+				resetGlobalState: () => {
+					setUser(null);
+					setTokenMetadata(null);
+				},
 			}}
 		>
 			{children}
