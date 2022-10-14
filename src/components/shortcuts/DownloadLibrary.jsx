@@ -1,31 +1,31 @@
-import React from "react";
-import { CSVLink } from "react-csv";
-import { FaFileCsv } from "react-icons/fa";
-import _ from "lodash";
+import React from 'react';
+// components
+import { CSVLink } from 'react-csv';
+// components
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro';
 
-const getCsvData = (savedTracksData) => {
-  const csvData = [["Track Name", "Artist Name", "Album Name", "id", "Artist id", "Album id"]];
-  _.forEach(savedTracksData, (data) => {
-    const trackDetails = [
-      data.trackName,
-      data.artistName,
-      data.albumName,
-      data.id,
-      data.trackData.artists[0].id,
-      data.trackData.album.id,
-    ];
-    csvData.push(trackDetails);
-  });
-  return csvData;
+const getCsvData = (data) => {
+	const csvData = [['Track Name', 'Artist Name', 'Album Name', 'id', 'Artist id', 'Album id']];
+	data.forEach((track) => {
+		const trackDetails = [
+			track.trackName,
+			track.artistName,
+			track.albumName,
+			track.trackId,
+			track.trackData.artists[0].id,
+			track.trackData.album.id,
+		];
+		csvData.push(trackDetails);
+	});
+	return csvData;
 };
 
-const DownloadLibrary = ({ className, savedTracksData }) => {
-  return (
-    <CSVLink data={getCsvData(savedTracksData)} target="_blank" className={`${className} btn btn-light`}>
-      Download to CSV
-      <FaFileCsv className="icon" />
-    </CSVLink>
-  );
-};
-
-export default DownloadLibrary;
+export default function DownloadLibrary({ data }) {
+	return (
+		<CSVLink data={getCsvData(data)} className="btn btn-light btn-lg">
+			<FontAwesomeIcon icon={solid('download')} />
+			<span className="mx-2">Download to CSV</span>
+		</CSVLink>
+	);
+}

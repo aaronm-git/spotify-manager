@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 // components
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro';
-
+import DeleteDuplicates from './DeleteDuplicates';
 const toggleShowDuplicates = (data, setData) => {
 	const duplicates = data.filter((item, index) => {
 		const exactDuplicate = data.indexOf(item) !== index;
@@ -33,18 +33,21 @@ export default function ShowDuplicatesToggle({ data, setData }) {
 	}, [checked]);
 
 	return (
-		<ToggleButton
-			id="showDupsToggle"
-			variant="outline-primary"
-			type="checkbox"
-			checked={checked}
-			size="lg"
-			title="Show Duplicates"
-			value="1"
-			onChange={() => setChecked(!checked)}
-		>
-			<FontAwesomeIcon icon={solid('clone')} />
-			<span className="visually-hidden">Show Duplicates</span>
-		</ToggleButton>
+		<Fragment>
+			<ToggleButton
+				id="showDupsToggle"
+				variant="outline-primary"
+				type="checkbox"
+				checked={checked}
+				size="lg"
+				title="Show Duplicates"
+				value="1"
+				onChange={() => setChecked(!checked)}
+			>
+				<FontAwesomeIcon icon={solid('clone')} />
+				<span className="mx-2">Show Duplicates</span>
+			</ToggleButton>
+			{checked && <DeleteDuplicates data={data} setChecked={setChecked} />}
+		</Fragment>
 	);
 }

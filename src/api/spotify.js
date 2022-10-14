@@ -134,19 +134,37 @@ export const getUserSavedTracks = async (token, limit = 50, market = null, offse
 			limit +
 			(market ? '&market=' + market : '') +
 			(offset ? '&offset=' + offset : '');
-		do {
-			const response = await axios({
-				method: 'get',
-				url,
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + token,
-				},
+
+		const response = await axios({
+			method: 'get',
+			url,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			},
+		});
+		savedTracks.push(...response.data.items);
+		const total = response.data.total;
+		if (response.data.next) {
+			const promisesArray = [];
+			for (let i = response.data.items.length; i < total; i += 50) {
+				const promiseUrl = response.data.next.replace(/offset=\d+/, 'offset=' + i);
+				promisesArray.push(
+					axios({
+						method: 'get',
+						url: promiseUrl,
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + token,
+						},
+					})
+				);
+			}
+			const responses = await Promise.all(promisesArray);
+			responses.forEach((response) => {
+				savedTracks.push(...response.data.items);
 			});
-			savedTracks.push(...response.data.items);
-			url = response.data.next;
-			// url = null;
-		} while (!!url);
+		}
 		return processTracks(savedTracks);
 	} catch (error) {
 		throw new Error(error);
@@ -157,28 +175,42 @@ export const getTestUserSavedTracks = async () => processTracks(testTracks);
 
 /**
  * Deletes tracks from the user's saved tracks
+ * @param { String } token  - The token to be used for authentication
  * @param { Array } tracks  - The tracks to be deleted
  * @param { Number } limit  - The limit of tracks to be deleted at a time
  */
 
-export const deleteTracks = async (tracks, limit = 50) => {
-	const trackIds = tracks.map((track) => track.track.id);
-	const trackIdsChunks = [];
-	for (let i = 0; i < trackIds.length; i += limit) {
-		trackIdsChunks.push(trackIds.slice(i, i + limit));
-	}
-	for (let i = 0; i < trackIdsChunks.length; i++) {
-		await axios({
-			method: 'delete',
-			url: 'https://api.spotify.com/v1/me/tracks',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + base64Authorization,
-			},
-			data: {
-				ids: trackIdsChunks[i],
-			},
-		});
+export const deleteTracks = async (token, tracks) => {
+	try {
+		const trackIds = tracks.map((track) => track.trackId);
+		const trackIdsChunks = [];
+		if (trackIds.length) {
+			for (let i = 0; i < trackIds.length; i += 50) {
+				trackIdsChunks.push(trackIds.slice(i, i + 50));
+			}
+			const promises = [];
+			for (let i = 0; i < trackIdsChunks.length; i++) {
+				promises.push(
+					axios({
+						method: 'delete',
+						url: 'https://api.spotify.com/v1/me/tracks',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + token,
+						},
+						data: {
+							ids: trackIdsChunks[i],
+						},
+					})
+				);
+			}
+			await Promise.all(promises);
+			return true;
+		} else {
+			return null;
+		}
+	} catch (error) {
+		throw new Error(error);
 	}
 };
 
